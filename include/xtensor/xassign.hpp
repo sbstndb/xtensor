@@ -725,7 +725,7 @@ namespace xt
 
         for (size_type i = 0; i < align_begin; ++i)
         {
-            e1.data_element(i) = conditional_cast<needs_cast, e1_value_type>(e2.data_element(i));
+            e1.data_element(i) = e2.data_element(i);
         }
 
 #if defined(XTENSOR_USE_TBB)
@@ -786,7 +786,7 @@ namespace xt
 #endif
         for (size_type i = align_end; i < size; ++i)
         {
-            e1.data_element(i) = conditional_cast<needs_cast, e1_value_type>(e2.data_element(i));
+            e1.data_element(i) = e2.data_element(i);
         }
     }
 
