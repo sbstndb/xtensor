@@ -723,11 +723,11 @@ namespace xt
         size_type align_begin = is_aligned ? 0 : xt_simd::get_alignment_offset(e1.data(), size, simd_size);
         size_type align_end = align_begin + ((size - align_begin) & ~(simd_size - 1));
 
-        for (size_type i = 0; i < align_begin; ++i)
-        {
-            e1.data_element(i) = e2.data_element(i);
-        }
-
+//      for (size_type i = 0; i < align_begin; ++i)
+//      {
+//          e1.data_element(i) = e2.data_element(i);
+//      }
+//	std::cout << " align_begin : " << align_begin << std::endl ; 
 #if defined(XTENSOR_USE_TBB)
         if (size >= XTENSOR_TBB_THRESHOLD)
         {
@@ -784,10 +784,11 @@ namespace xt
             e1.template store_simd<lhs_align_mode>(i, e2.template load_simd<rhs_align_mode, value_type>(i));
         }
 #endif
-        for (size_type i = align_end; i < size; ++i)
-        {
-            e1.data_element(i) = e2.data_element(i);
-        }
+//        for (size_type i = align_end; i < size; ++i)
+//        {
+//            e1.data_element(i) = e2.data_element(i);
+//        }
+//	std::cout << "align_end : " << size - align_end << std::endl ; 
     }
 
     template <class E1, class E2>

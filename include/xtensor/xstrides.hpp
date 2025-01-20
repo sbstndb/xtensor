@@ -733,46 +733,52 @@ namespace xt
     template <class S1, class S2>
     inline bool broadcast_shape(const S1& input, S2& output)
     {
+
+
+	//return true ; 
+	
         bool trivial_broadcast = (input.size() == output.size());
         // Indices are faster than reverse iterators
         using value_type = typename S2::value_type;
         auto output_index = output.size();
         auto input_index = input.size();
 
-        if (output_index < input_index)
-        {
-            throw_broadcast_error(output, input);
-        }
+//        if (output_index < input_index)
+//        {
+//            throw_broadcast_error(output, input);
+//        }
         for (; input_index != 0; --input_index, --output_index)
         {
             // First case: output = (MAX, MAX, ...., MAX)
             // output is a new shape that has not been through
             // the broadcast process yet; broadcast is trivial
-            if (output[output_index - 1] == std::numeric_limits<value_type>::max())
+            //if (output[output_index - 1] == std::numeric_limits<value_type>::max())
             {
                 output[output_index - 1] = static_cast<value_type>(input[input_index - 1]);
             }
             // Second case: output has been initialized to 1. Broadcast is trivial
             // only if input is 1 to.
-            else if (output[output_index - 1] == 1)
-            {
-                output[output_index - 1] = static_cast<value_type>(input[input_index - 1]);
-                trivial_broadcast = trivial_broadcast && (input[input_index - 1] == 1);
-            }
+            //else if (output[output_index - 1] == 1)
+            //{
+            //    output[output_index - 1] = static_cast<value_type>(input[input_index - 1]);
+            //    trivial_broadcast = trivial_broadcast && (input[input_index - 1] == 1);
+            //}
             // Third case: output has been initialized to something different from 1.
             // if input is 1, then the broadcast is not trivial
-            else if (input[input_index - 1] == 1)
-            {
-                trivial_broadcast = false;
-            }
+//          else if (input[input_index - 1] == 1)
+//          {
+//              trivial_broadcast = false;
+//          }
             // Last case: input and output must have the same value, else
             // shape are not compatible and an exception is thrown
-            else if (static_cast<value_type>(input[input_index - 1]) != output[output_index - 1])
-            {
-                throw_broadcast_error(output, input);
-            }
+//            else if (static_cast<value_type>(input[input_index - 1]) != output[output_index - 1])
+//            {
+//                throw_broadcast_error(output, input);
+//            }
         }
+//std::cout << "trivial ? " << trivial_broadcast << std::endl ; 
         return trivial_broadcast;
+	
     }
 
     template <class S1, class S2>

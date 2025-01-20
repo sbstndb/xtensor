@@ -1018,6 +1018,7 @@ namespace xt
             size_type data_size = compute_strides<D::static_layout>(m_shape, m_layout, m_strides, m_backstrides);
             detail::resize_data_container(this->storage(), data_size);
         }
+	
     }
 
     /**
