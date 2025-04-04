@@ -676,12 +676,12 @@ namespace xt
 
         xt::dynamic_shape<std::size_t> sd = {3, 2, 1};
         auto ed1 = empty<double>(sd);
-//        auto ed2 = empty<double, layout_type::column_major>(dynamic_shape<std::size_t>({3, 3, 3}));
+        auto ed2 = empty<double, layout_type::column_major>(dynamic_shape<std::size_t>({3, 3, 3}));
         auto ed3 = empty<double>(std::vector<std::size_t>({3, 3, 3}));
         b = std::is_same<decltype(ed1), xarray<double>>::value;
         EXPECT_TRUE(b);
-//        b = std::is_same<decltype(ed2), xarray<double, layout_type::column_major>>::value;
-//        EXPECT_TRUE(b);
+        b = std::is_same<decltype(ed2), xarray<double, layout_type::column_major>>::value;
+        EXPECT_TRUE(b);
         b = std::is_same<decltype(ed3), xarray<double>>::value;
         EXPECT_TRUE(b);
     }
