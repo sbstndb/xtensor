@@ -85,11 +85,18 @@ namespace xt
      *
      * @param shape shape of the new xcontainer
      */
-    template <class T, layout_type L = XTENSOR_DEFAULT_LAYOUT, class S>
+    template <class T, std::size_t dummy=0, layout_type L = XTENSOR_DEFAULT_LAYOUT, class S>
     inline xarray<T, L> empty(const S& shape)
     {
         return xarray<T, L>::from_shape(shape);
     }
+
+    template <class T, layout_type L = XTENSOR_DEFAULT_LAYOUT, class S>
+    inline xarray<T, L> empty_test(const S& shape)
+    {
+        return xarray<T, L>::from_shape(shape);
+    }
+
 
     template <class T, layout_type L = XTENSOR_DEFAULT_LAYOUT, class ST, std::size_t N>
     inline xtensor<T, N, L> empty(const std::array<ST, N>& shape)
