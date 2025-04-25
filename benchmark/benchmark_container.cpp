@@ -61,30 +61,31 @@ namespace xt
         BENCHMARK_TEMPLATE(container_iteration, xtensor_container<std::vector<double>, 1>)->Arg(1000);
         BENCHMARK_TEMPLATE(container_iteration, xtensor_container<xt::uvector<double>, 1>)->Arg(1000);
 
-        template <class E>
-        inline auto container_xiteration(benchmark::State& state)
-        {
-            using value_type = typename E::value_type;
-            E x, y, res;
-            init_benchmark(x, y, res, state.range(0));
-            value_type a = value_type(2.7);
-
-            for (auto _ : state)
+        /** this code is the same as container_iteration. Why ?
+            template <class E>
+            inline auto container_xiteration(benchmark::State& state)
             {
-                auto iterx = x.begin();
-                auto itery = y.begin();
-                for (auto iter = res.begin(); iter != res.end(); ++iter, ++iterx, ++itery)
+                using value_type = typename E::value_type;
+                E x, y, res;
+                init_benchmark(x, y, res, state.range(0));
+                value_type a = value_type(2.7);
+
+                for (auto _ : state)
                 {
-                    *iter = a * (*iterx) + (*itery);
+                    auto iterx = x.begin();
+                    auto itery = y.begin();
+                    for (auto iter = res.begin(); iter != res.end(); ++iter, ++iterx, ++itery)
+                    {
+                        *iter = a * (*iterx) + (*itery);
+                    }
                 }
             }
-        }
 
-        BENCHMARK_TEMPLATE(container_xiteration, xarray_container<std::vector<double>>)->Arg(1000);
-        BENCHMARK_TEMPLATE(container_xiteration, xarray_container<xt::uvector<double>>)->Arg(1000);
-        BENCHMARK_TEMPLATE(container_xiteration, xtensor_container<std::vector<double>, 1>)->Arg(1000);
-        BENCHMARK_TEMPLATE(container_xiteration, xtensor_container<xt::uvector<double>, 1>)->Arg(1000);
-
+            BENCHMARK_TEMPLATE(container_xiteration, xarray_container<std::vector<double>>)->Arg(1000);
+            BENCHMARK_TEMPLATE(container_xiteration, xarray_container<xt::uvector<double>>)->Arg(1000);
+            BENCHMARK_TEMPLATE(container_xiteration, xtensor_container<std::vector<double>, 1>)->Arg(1000);
+            BENCHMARK_TEMPLATE(container_xiteration, xtensor_container<xt::uvector<double>, 1>)->Arg(1000);
+        **/
         template <class E>
         inline auto container_indexing(benchmark::State& state)
         {
