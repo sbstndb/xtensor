@@ -26,15 +26,15 @@ inline void CustomArguments(benchmark::internal::Benchmark* b,
 }
 
 
-inline constexpr int min;
-inline constexpr int max;
-inline constexpr int threshold1;
-inline constexpr int threshold2;
+inline constexpr int min = 1;
+inline constexpr int max = 1024;
+inline constexpr int threshold1 = 8;
+inline constexpr int threshold2 = 32;
 
 
-inline constexpr int min_2d;
-inline constexpr int max_2d;
-inline constexpr int threshold1_2d;
-inline constexpr int threshold2_2d;
+inline constexpr int min_2d = 1;
+inline constexpr int max_2d = 100;
+inline constexpr int threshold1_2d = 8;
+inline constexpr int threshold2_2d = 32;
 
 
