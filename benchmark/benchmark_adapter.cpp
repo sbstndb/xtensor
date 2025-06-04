@@ -25,6 +25,7 @@ namespace xt
 
         for (auto _ : state)
         {
+		//@sbstndbs: we benchmark adapt not xtensor allocation then why do not put the result allocation outside of the for loop ? this can leads to unfair comparsons
             xtensor<value_type, 1> result(std::array<std::size_t, 1>({4}));
             auto aa = xt::adapt(a);
             auto ab = xt::adapt(b);
