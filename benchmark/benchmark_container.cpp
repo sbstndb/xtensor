@@ -102,10 +102,10 @@ namespace xt
             E x, y, res;
             init_benchmark(x, y, res, state.range(0));
             value_type a = value_type(2.7);
-
+	    size_type n = x.size() ;
             for (auto _ : state)
             {
-                size_type n = x.size();
+//                size_type n = x.size();
                 for (size_type i = 0; i < n; ++i)
                 {
                     res(i) = a * x(i) + y(i);

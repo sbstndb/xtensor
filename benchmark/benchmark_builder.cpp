@@ -17,49 +17,13 @@
 namespace xt
 {
 
-/**
-void CustomArguments(
-                benchmark::internal::Benchmark* b,
-                int start ,
-                int end,
-                int threshold1,
-                int threshold2
-                ) {
-
-  // Phase linéaire (incréments de 1)
-  for (int i = start; i < threshold1 && i <= end; ++i) {
-    b->Arg(i);
-  }
-  // Phase linéaire (incréments de 16)
-  for (int i = threshold1; i <= threshold2 && i <= end; i+=16) {
-    b->Arg(i);
-  }
-  // Phase exponentielle (puissances de 2)
-  for (int i = threshold2 * 2; i <= end; i *= 2) {
-    b->Arg(i);
-  }
-}
-
-
-int min = 1 ;
-int max = 100000 ;
-int threshold1 = 128 ;
-int threshold2 = 8096 ;
-
-
-int min_s = 1 ;
-int max_s = 8096 ;
-int threshold1_s = 32 ;
-int threshold2_s = 256 ;
-**/
-
     template <class T>
     inline auto builder_xarange(benchmark::State& state)
     {
 	const int size = state.range(0); 
         for (auto _ : state)
         {
-            T res = xt::arange(0, size);
+            T res = xt::arange(0, size, 1);
             benchmark::DoNotOptimize(res.storage().data());
         }
     }
@@ -67,7 +31,7 @@ int threshold2_s = 256 ;
     template <class T>
     inline auto builder_xarange_manual(benchmark::State& state)
     {
-	    const std::size_t size = state.range(0);
+	const std::size_t size = state.range(0);
         for (auto _ : state)
         {
             T res = T::from_shape({size});
@@ -81,7 +45,7 @@ int threshold2_s = 256 ;
 
     inline auto builder_iota_vector(benchmark::State& state)
     {
-	    const std::size_t size = state.range(0);
+	const std::size_t size = state.range(0);
         for (auto _ : state)
         {
             xt::uvector<double> a{};

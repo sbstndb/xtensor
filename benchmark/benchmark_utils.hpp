@@ -27,9 +27,9 @@ inline void CustomArguments(benchmark::internal::Benchmark* b,
 
 
 inline constexpr int min = 1;
-inline constexpr int max = 1024;
-inline constexpr int threshold1 = 8;
-inline constexpr int threshold2 = 32;
+inline constexpr int max = 1024*8;
+inline constexpr int threshold1 = 64;
+inline constexpr int threshold2 = 1024;
 
 
 inline constexpr int min_2d = 1;

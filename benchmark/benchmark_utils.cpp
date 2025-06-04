@@ -24,6 +24,7 @@ void CustomArguments(
 }
 
 
+/**
 const int min = 1 ;
 const int max = 100000 ;
 const int threshold1 = 128 ;
@@ -33,5 +34,5 @@ const int min_2d = 1 ;
 const int max_2d = 8096 ;
 const int threshold1_2d = 32 ;
 const int threshold2_2d = 256 ;
-
+**/
 
