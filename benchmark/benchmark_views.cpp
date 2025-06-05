@@ -20,21 +20,23 @@
 #include "xtensor/views/xstrided_view.hpp"
 #include "xtensor/views/xview.hpp"
 
+#include "benchmark_utils.hpp"
+
 namespace xt
 {
     // Thanks to Ullrich Koethe for these benchmarks
     // https://github.com/xtensor-stack/xtensor/issues/695
     namespace view_benchmarks
     {
-        constexpr int SIZE = 1000;
 
         template <class V>
         void view_dynamic_iterator(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), size / 2});
             for (auto _ : state)
             {
                 std::copy(v.begin(), v.end(), res.begin());
@@ -45,10 +47,11 @@ namespace xt
         template <class V>
         void view_iterator(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::view(data, xt::all(), SIZE / 2);
+            auto v = xt::view(data, xt::all(), size / 2);
             for (auto _ : state)
             {
                 std::copy(v.begin(), v.end(), res.begin());
@@ -59,10 +62,11 @@ namespace xt
         template <class V>
         void view_loop(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), size / 2});
             for (auto _ : state)
             {
                 for (std::size_t k = 0; k < v.shape()[0]; ++k)
@@ -76,10 +80,11 @@ namespace xt
         template <class V>
         void view_loop_view(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::view(data, xt::all(), SIZE / 2);
+            auto v = xt::view(data, xt::all(), size / 2);
             for (auto _ : state)
             {
                 for (std::size_t k = 0; k < v.shape()[0]; ++k)
@@ -93,13 +98,14 @@ namespace xt
         template <class V>
         void view_loop_raw(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
             for (auto _ : state)
             {
-                std::size_t j = SIZE / 2;
-                for (std::size_t k = 0; k < SIZE; ++k)
+                std::size_t j = size / 2;
+                for (std::size_t k = 0; k < size; ++k)
                 {
                     res(k) = data(k, j);
                 }
@@ -110,10 +116,11 @@ namespace xt
         template <class V>
         void view_assign(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), size / 2});
             for (auto _ : state)
             {
                 xt::noalias(res) = v;
@@ -124,10 +131,11 @@ namespace xt
         template <class V>
         void view_assign_view(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::view(data, xt::all(), SIZE / 2);
+            auto v = xt::view(data, xt::all(), size / 2);
             auto r = xt::view(res, xt::all());
             for (auto _ : state)
             {
@@ -139,10 +147,11 @@ namespace xt
         template <class V>
         void view_assign_strided_view(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+            const int size = state.range(0);		
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), size / 2});
             auto r = xt::strided_view(res, xt::xstrided_slice_vector{xt::all()});
 
             for (auto _ : state)
@@ -155,10 +164,11 @@ namespace xt
         template <class V>
         void view_assign_view_noalias(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+	    const int size = state.range(0);
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::view(data, xt::all(), SIZE / 2);
+            auto v = xt::view(data, xt::all(), size / 2);
             auto r = xt::view(res, xt::all());
             for (auto _ : state)
             {
@@ -170,10 +180,11 @@ namespace xt
         template <class V>
         void view_assign_strided_view_noalias(benchmark::State& state)
         {
-            xt::xtensor<V, 2> data = xt::ones<V>({SIZE, SIZE});
-            xt::xtensor<V, 1> res = xt::ones<V>({SIZE});
+	    const int size = state.range(0);
+            xt::xtensor<V, 2> data = xt::ones<V>({size, size});
+            xt::xtensor<V, 1> res = xt::ones<V>({size});
 
-            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), size / 2});
             auto r = xt::strided_view(res, xt::xstrided_slice_vector{xt::all()});
 
             for (auto _ : state)
@@ -183,22 +194,35 @@ namespace xt
             }
         }
 
-        BENCHMARK_TEMPLATE(view_dynamic_iterator, float);
-        BENCHMARK_TEMPLATE(view_iterator, float);
-        BENCHMARK_TEMPLATE(view_loop, float);
-        BENCHMARK_TEMPLATE(view_loop_view, float);
-        BENCHMARK_TEMPLATE(view_loop_raw, float);
-        BENCHMARK_TEMPLATE(view_assign, float);
-        BENCHMARK_TEMPLATE(view_assign_view, float);
-        BENCHMARK_TEMPLATE(view_assign_strided_view, float);
-        BENCHMARK_TEMPLATE(view_assign_view_noalias, float);
-        BENCHMARK_TEMPLATE(view_assign_strided_view_noalias, float);
+        BENCHMARK_TEMPLATE(view_dynamic_iterator, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_iterator, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_loop, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_loop_view, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_loop_raw, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_assign, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_assign_view, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_assign_strided_view, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_assign_view_noalias, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+        BENCHMARK_TEMPLATE(view_assign_strided_view_noalias, float)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
     }
 
     namespace finite_diff
     {
-        inline auto stencil_threedirections(benchmark::State& state, size_t size)
+        inline auto stencil_threedirections(benchmark::State& state)
         {
+	    const int size = state.range(0);
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
             for (auto _ : state)
             {
                 const std::array<size_t, 3> shape = {size, size, size};
@@ -216,12 +240,13 @@ namespace xt
             }
         }
 
-        inline auto stencil_twodirections(benchmark::State& state, size_t size)
+        inline auto stencil_twodirections(benchmark::State& state)
         {
+            const int size = state.range(0);		
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
             for (auto _ : state)
             {
-                const std::array<size_t, 3> shape = {size, size, size};
-                xt::xtensor<double, 3> a(shape), b(shape);
                 auto core = xt::range(1, size - 1);
                 xt::noalias(xt::view(b, core, core, core)
                 ) = 1.0 / 7.0
@@ -233,12 +258,13 @@ namespace xt
             }
         }
 
-        inline auto stencil_onedirection(benchmark::State& state, size_t size)
+        inline auto stencil_onedirection(benchmark::State& state)
         {
+            const int size = state.range(0);		
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
             for (auto _ : state)
             {
-                const std::array<size_t, 3> shape = {size, size, size};
-                xt::xtensor<double, 3> a(shape), b(shape);
                 auto core = xt::range(1, size - 1);
                 xt::noalias(xt::view(b, core, core, core)
                 ) = 1.0 / 2.0
@@ -248,21 +274,13 @@ namespace xt
             }
         }
 
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_50, 50);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_100, 100);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_200, 200);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_300, 300);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_500, 500);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_50, 50);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_100, 100);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_200, 200);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_300, 300);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_500, 500);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_50, 50);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_100, 100);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_200, 200);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_300, 300);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_500, 500);
+        BENCHMARK(stencil_threedirections)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});;
+        BENCHMARK(stencil_twodirections)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});;
+        BENCHMARK(stencil_onedirection)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});;
+
     }
 
     namespace stridedview
