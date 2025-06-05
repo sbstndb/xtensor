@@ -21,7 +21,7 @@ namespace xt
     template <class T>
     void CREATION_benchmark_from_shape(benchmark::State& state)
     {
-	    const int size = state.range(0);
+        const int size = state.range(0);
         for (auto _ : state)
         {
             T e = T::from_shape({static_cast<int>(size), static_cast<int>(size)});
@@ -31,7 +31,7 @@ namespace xt
     template <class T>
     void CREATION_benchmark_creation(benchmark::State& state)
     {
-	    const int size = state.range(0);
+	const int size = state.range(0);
         for (auto _ : state)
         {
             T e(typename T::shape_type({static_cast<int>(size), static_cast<int>(size)}));
@@ -50,7 +50,7 @@ namespace xt
 
     void CREATION_benchmark_empty_to_xtensor(benchmark::State& state)
     {
-	    const int size = state.range(0);
+	const int size = state.range(0);
         for (auto _ : state)
         {
             xtensor<double, 2> e = xt::empty<double>({size, size});
@@ -59,7 +59,7 @@ namespace xt
 
     void CREATION_benchmark_empty_to_xarray(benchmark::State& state)
     {
-	    const int size = state.range(0);
+	const int size = state.range(0);
         for (auto _ : state)
         {
             xarray<double> e = xt::empty<double>({size, size});

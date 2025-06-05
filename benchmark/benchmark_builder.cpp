@@ -58,7 +58,7 @@ namespace xt
     template <class T>
     inline auto BUILDER_arange_for_loop_assign(benchmark::State& state)
     {
-	    const std::size_t size = state.range(0);
+	const std::size_t size = state.range(0);
         for (auto _ : state)
         {
             auto expr = xt::arange(0, static_cast<int>(size));

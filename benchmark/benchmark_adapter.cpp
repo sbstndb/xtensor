@@ -22,11 +22,10 @@ namespace xt
         const V a({1, 2, 3, 4});
         const V b({1, 2, 3, 4});
         using value_type = typename V::value_type;
-
+        xtensor<value_type, 1> result(std::array<std::size_t, 1>({4}));
         for (auto _ : state)
         {
 		//@sbstndbs: we benchmark adapt not xtensor allocation then why do not put the result allocation outside of the for loop ? this can leads to unfair comparsons
-            xtensor<value_type, 1> result(std::array<std::size_t, 1>({4}));
             auto aa = xt::adapt(a);
             auto ab = xt::adapt(b);
             xt::noalias(result) = aa + ab;
@@ -39,10 +38,9 @@ namespace xt
     {
         const V a({1, 2, 3, 4});
         const V b({1, 2, 3, 4});
-
+	V res({0, 0, 0, 0});
         for (auto _ : state)
         {
-            V res({0, 0, 0, 0});
             auto aa = xt::adapt(a);
             auto ab = xt::adapt(b);
             auto ar = xt::adapt(res);
@@ -56,10 +54,9 @@ namespace xt
     {
         const V a({1, 2, 3, 4});
         const V b({1, 2, 3, 4});
-
+	V res({0, 0, 0, 0});
         for (auto _ : state)
         {
-            V res({0, 0, 0, 0});
             auto aa = xt::adapt(a);
             auto ab = xt::adapt(b);
             auto ar = xt::adapt(res);
@@ -74,10 +71,9 @@ namespace xt
     {
         const V a({1, 2, 3, 4});
         const V b({1, 2, 3, 4});
-
+	V res({0, 0, 0, 0});
         for (auto _ : state)
         {
-            V res({0, 0, 0, 0});
             auto aa = xt::adapt(a);
             auto ab = xt::adapt(b);
             auto ar = xt::adapt(res);
@@ -100,10 +96,9 @@ namespace xt
     {
         V a({1, 2, 3, 4});
         V b({1, 2, 3, 4});
-
+	V result({0, 0, 0, 0});
         for (auto _ : state)
         {
-            V result({0, 0, 0, 0});
             auto n = std::distance(a.begin(), a.end());
             for (std::size_t i = 0; i < n; ++i)
             {
