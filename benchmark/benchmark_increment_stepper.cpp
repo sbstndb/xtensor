@@ -18,7 +18,7 @@ namespace xt
 {
     namespace benchmark_xstepper
     {
-        void stepper_stepper(benchmark::State& state)
+        void STEPPER_stepper(benchmark::State& state)
         {
             std::vector<std::size_t> shape = {SHAPE, std::size_t(state.range(0))};
             xt::xarray<double> a = xt::random::rand<double>(shape);
@@ -43,9 +43,9 @@ namespace xt
             }
         }
 
-        BENCHMARK(stepper_stepper)->Range(RANGE);
+        BENCHMARK(STEPPER_stepper)->Range(RANGE);
 
-        void stepper_stepper_ref(benchmark::State& state)
+        void STEPPER_stepper_ref(benchmark::State& state)
         {
             std::vector<std::size_t> shape = {SHAPE, std::size_t(state.range(0))};
             xt::xarray<double> a = xt::random::rand<double>(shape);
@@ -67,6 +67,6 @@ namespace xt
             }
         }
 
-        BENCHMARK(stepper_stepper_ref)->Range(RANGE);
+        BENCHMARK(STEPPER_stepper_ref)->Range(RANGE);
     }
 }

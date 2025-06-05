@@ -20,7 +20,7 @@
 
 namespace xt
 {
-    void lambda_cube(benchmark::State& state)
+    void EXPRESSION_lambda_cube(benchmark::State& state)
     {
         xtensor<double, 2> x = empty<double>({state.range(0), state.range(0)});
         xtensor<double, 2> res = empty<double>({state.range(0), state.range(0)});	
@@ -31,7 +31,7 @@ namespace xt
         }
     }
 
-    void xexpression_cube(benchmark::State& state)
+    void EXPRESSION_xexpression_cube(benchmark::State& state)
     {
         xtensor<double, 2> x = empty<double>({state.range(0), state.range(0)});
         xtensor<double, 2> res = empty<double>({state.range(0), state.range(0)});	
@@ -42,7 +42,7 @@ namespace xt
         }
     }
 
-    void lambda_higher_pow(benchmark::State& state)
+    void EXPRESSION_lambda_higher_pow(benchmark::State& state)
     {
         xtensor<double, 2> x = empty<double>({state.range(0), state.range(0)});
         xtensor<double, 2> res = empty<double>({state.range(0), state.range(0)});
@@ -54,7 +54,7 @@ namespace xt
         }
     }
 
-    void xsimd_higher_pow(benchmark::State& state)
+    void EXPRESSION_xsimd_higher_pow(benchmark::State& state)
     {
         xtensor<double, 2> x = empty<double>({state.range(0), state.range(0)});
 	xtensor<double, 2> res = empty<double>({state.range(0), state.range(0)});
@@ -66,7 +66,7 @@ namespace xt
         }
     }
 
-    void xexpression_higher_pow(benchmark::State& state)
+    void EXPRESSION_xexpression_higher_pow(benchmark::State& state)
     {
         xtensor<double, 2> x = empty<double>({state.range(0), state.range(0)});
         xtensor<double, 2> res = empty<double>({state.range(0), state.range(0)});	
@@ -77,14 +77,14 @@ namespace xt
         }
     }
 
-    BENCHMARK(lambda_cube)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(EXPRESSION_lambda_cube)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(xexpression_cube)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(EXPRESSION_xexpression_cube)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(lambda_higher_pow)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(EXPRESSION_lambda_higher_pow)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(xsimd_higher_pow)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(EXPRESSION_xsimd_higher_pow)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(xexpression_higher_pow)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(EXPRESSION_xexpression_higher_pow)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
 }

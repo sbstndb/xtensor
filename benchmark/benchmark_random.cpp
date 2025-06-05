@@ -20,7 +20,7 @@ namespace xt
 {
     namespace random_bench
     {
-        void random_assign_xtensor(benchmark::State& state)
+        void RANDOM_assign_xtensor(benchmark::State& state)
         {
             for (auto _ : state)
             {
@@ -29,7 +29,7 @@ namespace xt
             }
         }
 
-        void random_assign_forloop(benchmark::State& state)
+        void RANDOM_assign_forloop(benchmark::State& state)
         {
             for (auto _ : state)
             {
@@ -45,7 +45,7 @@ namespace xt
             }
         }
 
-        void random_assign_xarray(benchmark::State& state)
+        void RANDOM_assign_xarray(benchmark::State& state)
         {
             for (auto _ : state)
             {
@@ -54,9 +54,9 @@ namespace xt
             }
         }
 
-        BENCHMARK(random_assign_xarray);
-        BENCHMARK(random_assign_xtensor);
-        BENCHMARK(random_assign_forloop);
+        BENCHMARK(RANDOM_assign_xarray);
+        BENCHMARK(RANDOM_assign_xtensor);
+        BENCHMARK(RANDOM_assign_forloop);
     }
 }
 

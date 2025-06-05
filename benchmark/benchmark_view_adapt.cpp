@@ -29,7 +29,7 @@ namespace xt
             return 2. * A;
         }
 
-        void random_view(benchmark::State& state)
+        void ADAPT_random_view(benchmark::State& state)
         {
             xt::xtensor<double, 4> A = xt::random::randn<double>({2000, 8, 2, 2});
             xt::xtensor<double, 4> B = xt::empty<double>(A.shape());
@@ -50,7 +50,7 @@ namespace xt
             }
         }
 
-        void random_adapt(benchmark::State& state)
+        void ADAPT_random_adapt(benchmark::State& state)
         {
             xt::xtensor<double, 4> A = xt::random::randn<double>({2000, 8, 2, 2});
             xt::xtensor<double, 4> B = xt::empty<double>(A.shape());
@@ -71,8 +71,8 @@ namespace xt
             }
         }
 
-        BENCHMARK(random_view);
-        BENCHMARK(random_adapt);
+        BENCHMARK(ADAPT_random_view);
+        BENCHMARK(ADAPT_random_adapt);
     }
 }
 

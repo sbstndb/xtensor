@@ -16,7 +16,7 @@ namespace xt
     namespace reducer
     {
         template <class E, class X>
-        void reducer_reducer(benchmark::State& state, const E& x, E& res, const X& axes)
+        void REDUCER_reducer(benchmark::State& state, const E& x, E& res, const X& axes)
         {
             for (auto _ : state)
             {
@@ -26,8 +26,8 @@ namespace xt
         }
 
         template <class E, class X>
-        void reducer_immediate_reducer(benchmark::State& state, const E& x, E& res, const X& axes)
-        {
+        void REDUCER_immediate_reducer(benchmark::State& state, const E& x, E& res, const X& axes)
+	{
             for (auto _ : state)
             {
                 res = sum(x, axes, evaluation_strategy::immediate);
@@ -46,20 +46,20 @@ namespace xt
         static auto res0 = xarray<double>::from_shape({100000});
         static auto res1 = xarray<double>::from_shape({10});
 
-        BENCHMARK_CAPTURE(reducer_reducer, 10x100000 / axis 0, u, res0, axis0);
-        BENCHMARK_CAPTURE(reducer_reducer, 10x100000 / axis 1, u, res1, axis1);
-        BENCHMARK_CAPTURE(reducer_reducer, 100000x10 / axis 1, v, res1, axis0);
-        BENCHMARK_CAPTURE(reducer_reducer, 100000x10 / axis 0, v, res0, axis1);
-        BENCHMARK_CAPTURE(reducer_reducer, 100000x10 / axis both, v, res2, axis_both);
+        BENCHMARK_CAPTURE(REDUCER_reducer, 10x100000 / axis 0, u, res0, axis0);
+        BENCHMARK_CAPTURE(REDUCER_reducer, 10x100000 / axis 1, u, res1, axis1);
+        BENCHMARK_CAPTURE(REDUCER_reducer, 100000x10 / axis 1, v, res1, axis0);
+        BENCHMARK_CAPTURE(REDUCER_reducer, 100000x10 / axis 0, v, res0, axis1);
+        BENCHMARK_CAPTURE(REDUCER_reducer, 100000x10 / axis both, v, res2, axis_both);
 
-        BENCHMARK_CAPTURE(reducer_immediate_reducer, 10x100000 / axis 0, u, res0, axis0);
-        BENCHMARK_CAPTURE(reducer_immediate_reducer, 10x100000 / axis 1, u, res1, axis1);
-        BENCHMARK_CAPTURE(reducer_immediate_reducer, 100000x10 / axis 1, v, res1, axis0);
-        BENCHMARK_CAPTURE(reducer_immediate_reducer, 100000x10 / axis 0, v, res0, axis1);
-        BENCHMARK_CAPTURE(reducer_immediate_reducer, 100000x10 / axis both, v, res2, axis_both);
+        BENCHMARK_CAPTURE(REDUCER_immediate_reducer, 10x100000 / axis 0, u, res0, axis0);
+        BENCHMARK_CAPTURE(REDUCER_immediate_reducer, 10x100000 / axis 1, u, res1, axis1);
+        BENCHMARK_CAPTURE(REDUCER_immediate_reducer, 100000x10 / axis 1, v, res1, axis0);
+        BENCHMARK_CAPTURE(REDUCER_immediate_reducer, 100000x10 / axis 0, v, res0, axis1);
+        BENCHMARK_CAPTURE(REDUCER_immediate_reducer, 100000x10 / axis both, v, res2, axis_both);
 
         template <class E, class X>
-        inline auto reducer_manual_strided_reducer(benchmark::State& state, const E& x, E& res, const X& axes)
+        inline auto REDUCER_manual_strided_reducer(benchmark::State& state, const E& x, E& res, const X& axes)
         {
             using value_type = typename E::value_type;
             std::size_t stride = x.strides()[axes[0]];
@@ -92,9 +92,9 @@ namespace xt
             }
         }
 
-        BENCHMARK_CAPTURE(reducer_manual_strided_reducer, 10x100000 / axis 0, u, res0, axis0);
-        BENCHMARK_CAPTURE(reducer_manual_strided_reducer, 10x100000 / axis 1, u, res1, axis1);
-        BENCHMARK_CAPTURE(reducer_manual_strided_reducer, 100000x10 / axis 1, v, res1, axis0);
-        BENCHMARK_CAPTURE(reducer_manual_strided_reducer, 100000x10 / axis 0, v, res0, axis1);
+        BENCHMARK_CAPTURE(REDUCER_manual_strided_reducer, 10x100000 / axis 0, u, res0, axis0);
+        BENCHMARK_CAPTURE(REDUCER_manual_strided_reducer, 10x100000 / axis 1, u, res1, axis1);
+        BENCHMARK_CAPTURE(REDUCER_manual_strided_reducer, 100000x10 / axis 1, v, res1, axis0);
+        BENCHMARK_CAPTURE(REDUCER_manual_strided_reducer, 100000x10 / axis 0, v, res0, axis1);
     }
 }

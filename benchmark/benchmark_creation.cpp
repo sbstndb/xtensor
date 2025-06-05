@@ -19,7 +19,7 @@ namespace xt
 {
 
     template <class T>
-    void benchmark_from_shape(benchmark::State& state)
+    void CREATION_benchmark_from_shape(benchmark::State& state)
     {
 	    const int size = state.range(0);
         for (auto _ : state)
@@ -29,7 +29,7 @@ namespace xt
     }
 
     template <class T>
-    void benchmark_creation(benchmark::State& state)
+    void CREATION_benchmark_creation(benchmark::State& state)
     {
 	    const int size = state.range(0);
         for (auto _ : state)
@@ -39,7 +39,7 @@ namespace xt
     }
 
 
-    void benchmark_empty(benchmark::State& state)
+    void CREATION_benchmark_empty(benchmark::State& state)
     {
         const int size = state.range(0);
         for (auto _ : state)
@@ -48,7 +48,7 @@ namespace xt
         }
     }
 
-    void benchmark_empty_to_xtensor(benchmark::State& state)
+    void CREATION_benchmark_empty_to_xtensor(benchmark::State& state)
     {
 	    const int size = state.range(0);
         for (auto _ : state)
@@ -57,7 +57,7 @@ namespace xt
         }
     }
 
-    void benchmark_empty_to_xarray(benchmark::State& state)
+    void CREATION_benchmark_empty_to_xarray(benchmark::State& state)
     {
 	    const int size = state.range(0);
         for (auto _ : state)
@@ -66,21 +66,21 @@ namespace xt
         }
     }
 
-    BENCHMARK(benchmark_empty)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(CREATION_benchmark_empty)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(benchmark_empty_to_xtensor)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(CREATION_benchmark_empty_to_xtensor)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(benchmark_empty_to_xarray)->Apply([](benchmark::internal::Benchmark* b)
-                        {CustomArguments(b, min, max, threshold1, threshold2);});
-
-    BENCHMARK_TEMPLATE(benchmark_from_shape, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
-                        {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(benchmark_from_shape, xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(CREATION_benchmark_empty_to_xarray)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
 
-    BENCHMARK_TEMPLATE(benchmark_creation, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(CREATION_benchmark_from_shape, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(benchmark_creation, xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(CREATION_benchmark_from_shape, xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+
+    BENCHMARK_TEMPLATE(CREATION_benchmark_creation, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+                        {CustomArguments(b, min, max, threshold1, threshold2);});
+    BENCHMARK_TEMPLATE(CREATION_benchmark_creation, xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
 
 }

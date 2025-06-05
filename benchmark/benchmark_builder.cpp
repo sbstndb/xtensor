@@ -18,7 +18,7 @@ namespace xt
 {
 
     template <class T>
-    inline auto builder_xarange(benchmark::State& state)
+    inline auto BUILDER_xarange(benchmark::State& state)
     {
 	const int size = state.range(0); 
         for (auto _ : state)
@@ -29,7 +29,7 @@ namespace xt
     }
 
     template <class T>
-    inline auto builder_xarange_manual(benchmark::State& state)
+    inline auto BUILDER_xarange_manual(benchmark::State& state)
     {
 	const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -43,7 +43,7 @@ namespace xt
         }
     }
 
-    inline auto builder_iota_vector(benchmark::State& state)
+    inline auto BUILDER_iota_vector(benchmark::State& state)
     {
 	const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -56,7 +56,7 @@ namespace xt
     }
 
     template <class T>
-    inline auto builder_arange_for_loop_assign(benchmark::State& state)
+    inline auto BUILDER_arange_for_loop_assign(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -72,7 +72,7 @@ namespace xt
     }
 
     template <class T>
-    inline auto builder_arange_for_loop_iter_assign(benchmark::State& state)
+    inline auto BUILDER_arange_for_loop_iter_assign(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -90,7 +90,7 @@ namespace xt
     }
 
     template <class T>
-    inline auto builder_arange_for_loop_iter_assign_backward(benchmark::State& state)
+    inline auto BUILDER_arange_for_loop_iter_assign_backward(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -111,7 +111,7 @@ namespace xt
     }
 
     template <class T>
-    inline auto builder_arange_assign_iterator(benchmark::State& state)
+    inline auto BUILDER_arange_assign_iterator(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -124,7 +124,7 @@ namespace xt
     }
 
     template <class T>
-    inline auto builder_std_iota(benchmark::State& state)
+    inline auto BUILDER_std_iota(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -135,7 +135,7 @@ namespace xt
         }
     }
 
-    inline auto builder_ones(benchmark::State& state)
+    inline auto BUILDER_ones(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -145,7 +145,7 @@ namespace xt
         }
     }
 
-    inline auto builder_ones_assign_iterator(benchmark::State& state)
+    inline auto BUILDER_ones_assign_iterator(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         auto xo = xt::ones<double>({size, size});
@@ -158,7 +158,7 @@ namespace xt
         }
     }
 
-    inline auto builder_ones_expr_for(benchmark::State& state)
+    inline auto BUILDER_ones_expr_for(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         auto xo = xt::ones<double>({size, size});
@@ -178,7 +178,7 @@ namespace xt
         }
     }
 
-    inline auto builder_ones_expr(benchmark::State& state)
+    inline auto BUILDER_ones_expr(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         auto xo = xt::ones<double>({size, size});
@@ -190,7 +190,7 @@ namespace xt
         }
     }
 
-    inline auto builder_ones_expr_fill(benchmark::State& state)
+    inline auto BUILDER_ones_expr_fill(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         auto xo = xt::ones<double>({size, size});
@@ -203,7 +203,7 @@ namespace xt
         }
     }
 
-    inline auto builder_std_fill(benchmark::State& state)
+    inline auto BUILDER_std_fill(benchmark::State& state)
     {
 	    const std::size_t size = state.range(0);
         for (auto _ : state)
@@ -214,45 +214,45 @@ namespace xt
         }
     }
 
-    BENCHMARK_TEMPLATE(builder_xarange, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_xarange, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_xarange, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_xarange, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_xarange_manual, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_xarange_manual, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_xarange_manual, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_xarange_manual, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_arange_for_loop_assign, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_for_loop_assign, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_arange_for_loop_assign, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_for_loop_assign, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
 
-    BENCHMARK_TEMPLATE(builder_arange_assign_iterator, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_assign_iterator, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_arange_assign_iterator, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_assign_iterator, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_arange_for_loop_iter_assign, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_for_loop_iter_assign, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_arange_for_loop_iter_assign_backward, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_for_loop_iter_assign_backward, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_arange_for_loop_iter_assign, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_for_loop_iter_assign, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_arange_for_loop_iter_assign_backward, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_arange_for_loop_iter_assign_backward, xtensor<double, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK_TEMPLATE(builder_std_iota, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK_TEMPLATE(BUILDER_std_iota, xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(builder_iota_vector)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(BUILDER_iota_vector)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-    BENCHMARK(builder_ones)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(BUILDER_ones)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min_2d, max_2d, threshold1_2d, threshold2_2d);});
-    BENCHMARK(builder_ones_assign_iterator)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(BUILDER_ones_assign_iterator)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min_2d, max_2d, threshold1_2d, threshold2_2d);});
-    BENCHMARK(builder_ones_expr)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(BUILDER_ones_expr)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min_2d, max_2d, threshold1_2d, threshold2_2d);});
-    BENCHMARK(builder_ones_expr_fill)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(BUILDER_ones_expr_fill)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min_2d, max_2d, threshold1_2d, threshold2_2d);});
-    BENCHMARK(builder_ones_expr_for)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(BUILDER_ones_expr_for)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min_2d, max_2d, threshold1_2d, threshold2_2d);});
-    BENCHMARK(builder_std_fill)->Apply([](benchmark::internal::Benchmark* b)
+    BENCHMARK(BUILDER_std_fill)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min_2d, max_2d, threshold1_2d, threshold2_2d);});
 }

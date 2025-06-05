@@ -20,7 +20,7 @@ namespace xt
     namespace benchmark_xshape
     {
         template <class T>
-        void xshape_initializer(benchmark::State& state)
+        void XSHAPE_initializer(benchmark::State& state)
         {
             for (auto _ : state)
             {
@@ -30,7 +30,7 @@ namespace xt
         }
 
         template <class T>
-        void xshape_initializer_long(benchmark::State& state)
+        void XSHAPE_initializer_long(benchmark::State& state)
         {
             for (auto _ : state)
             {
@@ -40,7 +40,7 @@ namespace xt
         }
 
         template <class T>
-        void xshape_access(benchmark::State& state)
+        void XSHAPE_access(benchmark::State& state)
         {
             T a({3, 2, 1, 3});
             for (auto _ : state)
@@ -53,16 +53,16 @@ namespace xt
             }
         }
 
-        BENCHMARK_TEMPLATE(xshape_initializer, std::vector<std::size_t>);
-        BENCHMARK_TEMPLATE(xshape_initializer, xt::svector<std::size_t, 4>);
-        BENCHMARK_TEMPLATE(xshape_initializer, std::array<std::size_t, 4>);
-        BENCHMARK_TEMPLATE(xshape_initializer_long, xt::svector<std::size_t, 4>);
-        BENCHMARK_TEMPLATE(xshape_initializer_long, xt::uvector<std::size_t>);
-        BENCHMARK_TEMPLATE(xshape_initializer_long, std::vector<std::size_t>);
-        BENCHMARK_TEMPLATE(xshape_access, xt::uvector<double>);
-        BENCHMARK_TEMPLATE(xshape_access, std::vector<double>);
-        BENCHMARK_TEMPLATE(xshape_access, xt::svector<std::size_t, 4>);
-        BENCHMARK_TEMPLATE(xshape_access, std::array<std::size_t, 4>);
+        BENCHMARK_TEMPLATE(XSHAPE_initializer, std::vector<std::size_t>);
+        BENCHMARK_TEMPLATE(XSHAPE_initializer, xt::svector<std::size_t, 4>);
+        BENCHMARK_TEMPLATE(XSHAPE_initializer, std::array<std::size_t, 4>);
+        BENCHMARK_TEMPLATE(XSHAPE_initializer_long, xt::svector<std::size_t, 4>);
+        BENCHMARK_TEMPLATE(XSHAPE_initializer_long, xt::uvector<std::size_t>);
+        BENCHMARK_TEMPLATE(XSHAPE_initializer_long, std::vector<std::size_t>);
+        BENCHMARK_TEMPLATE(XSHAPE_access, xt::uvector<double>);
+        BENCHMARK_TEMPLATE(XSHAPE_access, std::vector<double>);
+        BENCHMARK_TEMPLATE(XSHAPE_access, xt::svector<std::size_t, 4>);
+        BENCHMARK_TEMPLATE(XSHAPE_access, std::array<std::size_t, 4>);
     }
 }
 

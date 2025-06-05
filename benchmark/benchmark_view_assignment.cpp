@@ -16,7 +16,7 @@
 
 namespace xt
 {
-    inline void create_xview(benchmark::State& state)
+    inline void ASSIGNMENT_create_xview(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         for (auto _ : state)
@@ -25,7 +25,7 @@ namespace xt
         }
     }
 
-    inline void create_strided_view_outofplace(benchmark::State& state)
+    inline void ASSIGNMENT_create_strided_view_outofplace(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         xstrided_slice_vector sv = {1, 2, all(), all()};
@@ -35,7 +35,7 @@ namespace xt
         }
     }
 
-    inline void create_strided_view_inplace(benchmark::State& state)
+    inline void ASSIGNMENT_create_strided_view_inplace(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         for (auto _ : state)
@@ -44,7 +44,7 @@ namespace xt
         }
     }
 
-    inline void assign_create_view(benchmark::State& state)
+    inline void ASSIGNMENT_assign_create_view(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         for (auto _ : state)
@@ -79,7 +79,7 @@ namespace xt
      *         }
      *     }
      */
-    inline void assign_create_manual_view(benchmark::State& state)
+    inline void ASSIGNMENT_assign_create_manual_view(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         for (auto _ : state)
@@ -97,7 +97,7 @@ namespace xt
         }
     }
 
-    inline void assign_create_manual_noview(benchmark::State& state)
+    inline void ASSIGNMENT_assign_create_manual_noview(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         for (auto _ : state)
@@ -115,7 +115,7 @@ namespace xt
         }
     }
 
-    inline void data_offset(benchmark::State& state)
+    inline void ASSIGNMENT_data_offset(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         for (auto _ : state)
@@ -131,7 +131,7 @@ namespace xt
         }
     }
 
-    inline void data_offset_view(benchmark::State& state)
+    inline void ASSIGNMENT_data_offset_view(benchmark::State& state)
     {
         xt::xtensor<double, 4> tens = xt::random::rand<double>({100, 100, 3, 3});
         for (auto _ : state)
@@ -148,13 +148,13 @@ namespace xt
         }
     }
 
-    BENCHMARK(create_xview);
-    BENCHMARK(create_strided_view_outofplace);
-    BENCHMARK(create_strided_view_inplace);
-    BENCHMARK(assign_create_manual_noview);
-    //    BENCHMARK(assign_create_strided_view);
-    BENCHMARK(assign_create_view);
-    BENCHMARK(assign_create_manual_view);
-    BENCHMARK(data_offset);
-    BENCHMARK(data_offset_view);
+    BENCHMARK(ASSIGNMENT_create_xview);
+    BENCHMARK(ASSIGNMENT_create_strided_view_outofplace);
+    BENCHMARK(ASSIGNMENT_create_strided_view_inplace);
+    BENCHMARK(ASSIGNMENT_assign_create_manual_noview);
+    //    BENCHMARK(ASSIGNMENT_assign_create_strided_view);
+    BENCHMARK(ASSIGNMENT_assign_create_view);
+    BENCHMARK(ASSIGNMENT_assign_create_manual_view);
+    BENCHMARK(ASSIGNMENT_data_offset);
+    BENCHMARK(ASSIGNMENT_data_offset_view);
 }

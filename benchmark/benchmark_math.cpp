@@ -67,7 +67,7 @@ namespace xt
          ***********************/
 
         template <class F, class V>
-        inline void math_xtensor_2(benchmark::State& state)
+        inline void MATH_xtensor_2(benchmark::State& state)
         {
             xtensor<double, 2> lhs, rhs, res;
             init_xtensor_benchmark(lhs, rhs, res, state.range(0), state.range(0));
@@ -82,7 +82,7 @@ namespace xt
         }
 
         template <class F, class V>
-        inline void math_xtensor_cpy_2(benchmark::State& state)
+        inline void MATH_xtensor_cpy_2(benchmark::State& state)
         {
             xtensor<double, 2> lhs, rhs, res;
             init_xtensor_benchmark(lhs, rhs, res, state.range(0), state.range(0));
@@ -98,7 +98,7 @@ namespace xt
         }
 
         template <class F, class V>
-        inline void math_xtensor_1(benchmark::State& state)
+        inline void MATH_xtensor_1(benchmark::State& state)
         {
             xtensor<double, 2> lhs, rhs, res;
             init_xtensor_benchmark(lhs, rhs, res, state.range(0), state.range(0));
@@ -113,7 +113,7 @@ namespace xt
         }
 
         template <class F>
-        inline auto math_ref_2(benchmark::State& state)
+        inline auto MATH_ref_2(benchmark::State& state)
         {
             auto f = F();
             xtensor<double, 2> lhs, rhs, res;
@@ -131,7 +131,7 @@ namespace xt
         }
 
         template <class F>
-        inline void math_ref_1(benchmark::State& state)
+        inline void MATH_ref_1(benchmark::State& state)
         {
             auto f = F();
             xtensor<double, 2> lhs, rhs, res;
@@ -241,88 +241,88 @@ namespace xt
          * benchmark groups *
          ********************/
 
-        BENCHMARK_TEMPLATE(math_ref_2, add_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_2, add_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_cpy_2, add_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_2, add_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_2, add_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_cpy_2, add_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_2, sub_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_2, sub_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_cpy_2, sub_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_2, sub_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_2, sub_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_cpy_2, sub_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_2, mul_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_2, mul_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_cpy_2, mul_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_2, mul_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_2, mul_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_cpy_2, mul_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_2, div_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_2, div_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_cpy_2, div_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_2, div_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_2, div_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_cpy_2, div_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_1, exp_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, exp_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, exp2_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, exp2_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, expm1_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, expm1_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, log_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, log_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, log2_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, log2_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, log10_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, log10_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, log1p_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, log1p_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, exp_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, exp_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, exp2_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, exp2_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, expm1_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, expm1_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, log_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, log_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, log2_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, log2_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, log10_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, log10_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, log1p_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, log1p_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_1, sin_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, sin_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, cos_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, cos_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, tan_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, tan_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, asin_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, asin_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, acos_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, acos_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, atan_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, atan_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, sin_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, sin_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, cos_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, cos_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, tan_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, tan_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, asin_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, asin_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, acos_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, acos_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, atan_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, atan_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_1, sinh_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, sinh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, cosh_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, cosh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, tanh_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, tanh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, asinh_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, asinh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, acosh_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, acosh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, atanh_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, atanh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, sinh_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, sinh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, cosh_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, cosh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, tanh_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, tanh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, asinh_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, asinh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, acosh_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, acosh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, atanh_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, atanh_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_2, pow_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_2, pow_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, sqrt_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, sqrt_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, cbrt_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, cbrt_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_2, hypot_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_2, hypot_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_2, pow_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_2, pow_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, sqrt_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, sqrt_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, cbrt_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, cbrt_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_2, hypot_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_2, hypot_fn, xtensor<double, 2>)->Range(MATH_RANGE);
 
-        BENCHMARK_TEMPLATE(math_ref_1, ceil_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, ceil_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, floor_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, floor_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, trunc_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, trunc_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, round_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, round_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, nearbyint_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, nearbyint_fn, xtensor<double, 2>)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_ref_1, rint_fn)->Range(MATH_RANGE);
-        BENCHMARK_TEMPLATE(math_xtensor_1, rint_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, ceil_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, ceil_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, floor_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, floor_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, trunc_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, trunc_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, round_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, round_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, nearbyint_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, nearbyint_fn, xtensor<double, 2>)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_ref_1, rint_fn)->Range(MATH_RANGE);
+        BENCHMARK_TEMPLATE(MATH_xtensor_1, rint_fn, xtensor<double, 2>)->Range(MATH_RANGE);
     }
 
     template <class T>
-    void scalar_assign(benchmark::State& state)
+    void MATH_scalar_assign(benchmark::State& state)
     {
         T res;
         std::size_t sz = static_cast<std::size_t>(state.range(0));
@@ -335,7 +335,7 @@ namespace xt
     }
 
     template <class T>
-    void scalar_assign_ref(benchmark::State& state)
+    void MATH_scalar_assign_ref(benchmark::State& state)
     {
         T res;
         std::size_t sz = static_cast<std::size_t>(state.range(0));
@@ -352,7 +352,7 @@ namespace xt
     }
 
     template <class T>
-    void boolean_func(benchmark::State& state)
+    void MATH_boolean_func(benchmark::State& state)
     {
         T a, b;
         std::size_t sz = static_cast<std::size_t>(state.range(0));
@@ -370,7 +370,7 @@ namespace xt
     }
 
     template <class T>
-    void boolean_func_ref(benchmark::State& state)
+    void MATH_boolean_func_ref(benchmark::State& state)
     {
         T a, b;
         std::size_t sz = static_cast<std::size_t>(state.range(0));
@@ -391,8 +391,8 @@ namespace xt
         }
     }
 
-    BENCHMARK_TEMPLATE(scalar_assign, xtensor<double, 2>)->Range(MATH_RANGE);
-    BENCHMARK_TEMPLATE(scalar_assign_ref, xtensor<double, 2>)->Range(MATH_RANGE);
-    BENCHMARK_TEMPLATE(boolean_func, xtensor<double, 2>)->Range(MATH_RANGE);
-    BENCHMARK_TEMPLATE(boolean_func_ref, xtensor<double, 2>)->Range(MATH_RANGE);
+    BENCHMARK_TEMPLATE(MATH_scalar_assign, xtensor<double, 2>)->Range(MATH_RANGE);
+    BENCHMARK_TEMPLATE(MATH_scalar_assign_ref, xtensor<double, 2>)->Range(MATH_RANGE);
+    BENCHMARK_TEMPLATE(MATH_boolean_func, xtensor<double, 2>)->Range(MATH_RANGE);
+    BENCHMARK_TEMPLATE(MATH_boolean_func_ref, xtensor<double, 2>)->Range(MATH_RANGE);
 }

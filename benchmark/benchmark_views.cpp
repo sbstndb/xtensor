@@ -30,7 +30,7 @@ namespace xt
     {
 
         template <class V>
-        void view_dynamic_iterator(benchmark::State& state)
+        void VIEWS_dynamic_iterator(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -45,7 +45,7 @@ namespace xt
         }
 
         template <class V>
-        void view_iterator(benchmark::State& state)
+        void VIEWS_iterator(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -60,7 +60,7 @@ namespace xt
         }
 
         template <class V>
-        void view_loop(benchmark::State& state)
+        void VIEWS_loop(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -78,7 +78,7 @@ namespace xt
         }
 
         template <class V>
-        void view_loop_view(benchmark::State& state)
+        void VIEWS_loop_view(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -96,7 +96,7 @@ namespace xt
         }
 
         template <class V>
-        void view_loop_raw(benchmark::State& state)
+        void VIEWS_loop_raw(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -114,7 +114,7 @@ namespace xt
         }
 
         template <class V>
-        void view_assign(benchmark::State& state)
+        void VIEWS_assign(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -129,7 +129,7 @@ namespace xt
         }
 
         template <class V>
-        void view_assign_view(benchmark::State& state)
+        void VIEWS_assign_view(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -145,7 +145,7 @@ namespace xt
         }
 
         template <class V>
-        void view_assign_strided_view(benchmark::State& state)
+        void VIEWS_assign_strided_view(benchmark::State& state)
         {
             const int size = state.range(0);		
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -162,7 +162,7 @@ namespace xt
         }
 
         template <class V>
-        void view_assign_view_noalias(benchmark::State& state)
+        void VIEWS_assign_view_noalias(benchmark::State& state)
         {
 	    const int size = state.range(0);
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -178,7 +178,7 @@ namespace xt
         }
 
         template <class V>
-        void view_assign_strided_view_noalias(benchmark::State& state)
+        void VIEWS_assign_strided_view_noalias(benchmark::State& state)
         {
 	    const int size = state.range(0);
             xt::xtensor<V, 2> data = xt::ones<V>({size, size});
@@ -194,31 +194,31 @@ namespace xt
             }
         }
 
-        BENCHMARK_TEMPLATE(view_dynamic_iterator, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_dynamic_iterator, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_iterator, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_iterator, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_loop, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_loop, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_loop_view, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_loop_view, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_loop_raw, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_loop_raw, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_assign, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_assign, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_assign_view, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_assign_view, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_assign_strided_view, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_assign_strided_view, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_assign_view_noalias, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_assign_view_noalias, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(view_assign_strided_view_noalias, float)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(VIEWS_assign_strided_view_noalias, float)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
     }
 
     namespace finite_diff
     {
-        inline auto stencil_threedirections(benchmark::State& state)
+        inline auto VIEWS_stencil_threedirections(benchmark::State& state)
         {
 	    const int size = state.range(0);
             const std::array<size_t, 3> shape = {size, size, size};
@@ -240,7 +240,7 @@ namespace xt
             }
         }
 
-        inline auto stencil_twodirections(benchmark::State& state)
+        inline auto VIEWS_stencil_twodirections(benchmark::State& state)
         {
             const int size = state.range(0);		
             const std::array<size_t, 3> shape = {size, size, size};
@@ -258,7 +258,7 @@ namespace xt
             }
         }
 
-        inline auto stencil_onedirection(benchmark::State& state)
+        inline auto VIEWS_stencil_onedirection(benchmark::State& state)
         {
             const int size = state.range(0);		
             const std::array<size_t, 3> shape = {size, size, size};
@@ -274,11 +274,11 @@ namespace xt
             }
         }
 
-        BENCHMARK(stencil_threedirections)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK(VIEWS_stencil_threedirections)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});;
-        BENCHMARK(stencil_twodirections)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK(VIEWS_stencil_twodirections)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});;
-        BENCHMARK(stencil_onedirection)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK(VIEWS_stencil_onedirection)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});;
 
     }
@@ -287,7 +287,7 @@ namespace xt
     {
 
         template <layout_type L1, layout_type L2>
-        inline auto transpose_assign(benchmark::State& state, std::vector<std::size_t> shape)
+        inline auto VIEWS_transpose_assign(benchmark::State& state, std::vector<std::size_t> shape)
         {
             xarray<double, L1> x = xt::arange<double>(compute_size(shape));
             x.resize(shape);
@@ -301,14 +301,14 @@ namespace xt
             }
         }
 
-        auto transpose_assign_rm_rm = transpose_assign<layout_type::row_major, layout_type::row_major>;
-        auto transpose_assign_cm_cm = transpose_assign<layout_type::column_major, layout_type::column_major>;
-        auto transpose_assign_rm_cm = transpose_assign<layout_type::row_major, layout_type::column_major>;
-        auto transpose_assign_cm_rm = transpose_assign<layout_type::column_major, layout_type::row_major>;
+        auto VIEWS_transpose_assign_rm_rm = VIEWS_transpose_assign<layout_type::row_major, layout_type::row_major>;
+        auto VIEWS_transpose_assign_cm_cm = VIEWS_transpose_assign<layout_type::column_major, layout_type::column_major>;
+        auto VIEWS_transpose_assign_rm_cm = VIEWS_transpose_assign<layout_type::row_major, layout_type::column_major>;
+        auto VIEWS_transpose_assign_cm_rm = VIEWS_transpose_assign<layout_type::column_major, layout_type::row_major>;
 
-        BENCHMARK_CAPTURE(transpose_assign_rm_rm, 10x20x500, {10, 20, 500});
-        BENCHMARK_CAPTURE(transpose_assign_cm_cm, 10x20x500, {10, 20, 500});
-        BENCHMARK_CAPTURE(transpose_assign_rm_cm, 10x20x500, {10, 20, 500});
-        BENCHMARK_CAPTURE(transpose_assign_cm_rm, 10x20x500, {10, 20, 500});
+        BENCHMARK_CAPTURE(VIEWS_transpose_assign_rm_rm, 10x20x500, {10, 20, 500});
+        BENCHMARK_CAPTURE(VIEWS_transpose_assign_cm_cm, 10x20x500, {10, 20, 500});
+        BENCHMARK_CAPTURE(VIEWS_transpose_assign_rm_cm, 10x20x500, {10, 20, 500});
+        BENCHMARK_CAPTURE(VIEWS_transpose_assign_cm_rm, 10x20x500, {10, 20, 500});
     }
 }

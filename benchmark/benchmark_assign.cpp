@@ -62,7 +62,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_c_assign(benchmark::State& state)
+        inline auto ASSIGN_assign_c_assign(benchmark::State& state)
         {
             using size_type = typename E::size_type;
 
@@ -82,7 +82,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_x_assign(benchmark::State& state)
+        inline auto ASSIGN_assign_x_assign(benchmark::State& state)
         {
             E x, y, res;
             init_xtensor_benchmark(x, y, res, state.range(0), state.range(0));
@@ -96,7 +96,7 @@ namespace xt
 
 	// here we should do _nd with template no ??? 
         template <class E>
-        inline auto assign_c_assign_ii(benchmark::State& state)
+        inline auto ASSIGN_assign_c_assign_ii(benchmark::State& state)
         {
             using size_type = typename E::size_type;
 
@@ -115,7 +115,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_x_assign_ii(benchmark::State& state)
+        inline auto ASSIGN_assign_x_assign_ii(benchmark::State& state)
         {
             E x, y, res;
             init_xtensor_benchmark(x, y, res, state.range(0), state.range(0));
@@ -127,7 +127,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_x_assign_iii(benchmark::State& state)
+        inline auto ASSIGN_assign_x_assign_iii(benchmark::State& state)
         {
             E x, y, res;
             init_xtensor_benchmark(x, y, res, state.range(0), state.range(0));
@@ -139,7 +139,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_c_assign_iii(benchmark::State& state)
+        inline auto ASSIGN_assign_c_assign_iii(benchmark::State& state)
         {
             using size_type = typename E::size_type;
 
@@ -158,7 +158,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_xstorageiter_copy(benchmark::State& state)
+        inline auto ASSIGN_assign_xstorageiter_copy(benchmark::State& state)
         {
             E x, y, res;
             init_xtensor_benchmark(x, y, res, state.range(0), state.range(0));
@@ -171,7 +171,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_xiter_copy(benchmark::State& state)
+        inline auto ASSIGN_assign_xiter_copy(benchmark::State& state)
         {
             E x, y, res;
             init_xtensor_benchmark(x, y, res, state.range(0), state.range(0));
@@ -184,7 +184,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_c_scalar_computed(benchmark::State& state)
+        inline auto ASSIGN_assign_c_scalar_computed(benchmark::State& state)
         {
             using size_type = typename E::size_type;
 
@@ -203,7 +203,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto assign_x_scalar_computed(benchmark::State& state)
+        inline auto ASSIGN_assign_x_scalar_computed(benchmark::State& state)
         {
             E x, y, res;
             init_xtensor_benchmark(x, y, res, state.range(0), state.range(0));
@@ -214,31 +214,31 @@ namespace xt
             }
         }
 
-        BENCHMARK_TEMPLATE(assign_c_assign, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_c_assign, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_x_assign, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_x_assign, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_xiter_copy, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_xiter_copy, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_xstorageiter_copy, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_xstorageiter_copy, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_c_assign_ii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_c_assign_ii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_x_assign_ii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_x_assign_ii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_x_assign_iii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_x_assign_iii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_c_assign_iii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_c_assign_iii, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_x_assign, xt::xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_x_assign, xt::xarray<double>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_x_assign, xt::xarray<double, layout_type::dynamic>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_x_assign, xt::xarray<double, layout_type::dynamic>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_x_assign, xt::xtensor<double, 2, layout_type::dynamic>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_x_assign, xt::xtensor<double, 2, layout_type::dynamic>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_c_scalar_computed, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_c_scalar_computed, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(assign_x_scalar_computed, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(ASSIGN_assign_x_scalar_computed, xt::xtensor<double, 2>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
     }
 }

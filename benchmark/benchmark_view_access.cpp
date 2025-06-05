@@ -73,7 +73,7 @@ namespace xt
         std::array<ptrdiff_t, N> m_shape, m_strides;
     };
 
-    void xview_access_calc(benchmark::State& state)
+    void ACCESS_xview_access_calc(benchmark::State& state)
     {
         xt::xtensor<double, 4> A = xt::random::rand<double>({100, 100, 4, 4});
         xt::xtensor<double, 3> elemvec = xt::random::rand<double>({100, 4, 4});
@@ -106,7 +106,7 @@ namespace xt
         }
     }
 
-    void raw_access_calc(benchmark::State& state)
+    void ACCESS_raw_access_calc(benchmark::State& state)
     {
         xt::xtensor<double, 4> A = xt::random::rand<double>({100, 100, 4, 4});
         xt::xtensor<double, 3> elemvec = xt::random::rand<double>({100, 4, 4});
@@ -137,7 +137,7 @@ namespace xt
         }
     }
 
-    void unchecked_access_calc(benchmark::State& state)
+    void ACCESS_unchecked_access_calc(benchmark::State& state)
     {
         xt::xtensor<double, 4> A = xt::random::rand<double>({100, 100, 4, 4});
         xt::xtensor<double, 3> elemvec = xt::random::rand<double>({100, 4, 4});
@@ -176,7 +176,7 @@ namespace xt
         }
     }
 
-    void simplearray_access_calc(benchmark::State& state)
+    void ACCESS_simplearray_access_calc(benchmark::State& state)
     {
         simple_array<double, 4> A(std::array<ptrdiff_t, 4>{100, 100, 4, 2});
         simple_array<double, 3> elemvec(std::array<ptrdiff_t, 3>{100, 4, 2});
@@ -283,7 +283,7 @@ namespace xt
     };
 
     template <layout_type L>
-    void jumping_access(benchmark::State& state)
+    void ACCESS_jumping_access(benchmark::State& state)
     {
         auto rx = jumping_random<xt::xtensor<std::size_t, 2, L>, L>();
         xt::xtensor<double, 3, L> elemvec = xt::random::rand<double>({M_NELEM, M_NNE, M_NDIM});
@@ -296,7 +296,7 @@ namespace xt
     }
 
     template <layout_type L>
-    void jumping_access_unchecked(benchmark::State& state)
+    void ACCESS_jumping_access_unchecked(benchmark::State& state)
     {
         auto rx = jumping_random<xt::xtensor<std::size_t, 2, L>, L>();
         xt::xtensor<double, 3, L> elemvec = xt::random::rand<double>({M_NELEM, M_NNE, M_NDIM});
@@ -308,7 +308,7 @@ namespace xt
         }
     }
 
-    void jumping_access_simplearray(benchmark::State& state)
+    void ACCESS_jumping_access_simplearray(benchmark::State& state)
     {
         auto rx = jumping_random<simple_array<std::size_t, 2>, layout_type::row_major>();
         simple_array<double, 3> elemvec({M_NELEM, M_NNE, M_NDIM});
@@ -322,13 +322,13 @@ namespace xt
         }
     }
 
-    BENCHMARK(raw_access_calc);
-    BENCHMARK(unchecked_access_calc);
-    BENCHMARK(simplearray_access_calc);
-    BENCHMARK(xview_access_calc);
-    BENCHMARK_TEMPLATE(jumping_access, layout_type::row_major);
-    BENCHMARK_TEMPLATE(jumping_access, layout_type::column_major);
-    BENCHMARK_TEMPLATE(jumping_access_unchecked, layout_type::row_major);
-    BENCHMARK_TEMPLATE(jumping_access_unchecked, layout_type::column_major);
-    BENCHMARK(jumping_access_simplearray);
+    BENCHMARK(ACCESS_raw_access_calc);
+    BENCHMARK(ACCESS_unchecked_access_calc);
+    BENCHMARK(ACCESS_simplearray_access_calc);
+    BENCHMARK(ACCESS_xview_access_calc);
+    BENCHMARK_TEMPLATE(ACCESS_jumping_access, layout_type::row_major);
+    BENCHMARK_TEMPLATE(ACCESS_jumping_access, layout_type::column_major);
+    BENCHMARK_TEMPLATE(ACCESS_jumping_access_unchecked, layout_type::row_major);
+    BENCHMARK_TEMPLATE(ACCESS_jumping_access_unchecked, layout_type::column_major);
+    BENCHMARK(ACCESS_jumping_access_simplearray);
 }

@@ -42,7 +42,7 @@ namespace xt
         }
 
         template <class E>
-        inline auto container_iteration(benchmark::State& state)
+        inline auto CONTAINER_iteration(benchmark::State& state)
         {
             using value_type = typename E::value_type;
             E x, y, res;
@@ -60,13 +60,13 @@ namespace xt
         }
 
 
-        BENCHMARK_TEMPLATE(container_iteration, xarray_container<std::vector<double>>)->Apply([](benchmark::internal::Benchmark* b) 
+        BENCHMARK_TEMPLATE(CONTAINER_iteration, xarray_container<std::vector<double>>)->Apply([](benchmark::internal::Benchmark* b) 
 			{CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(container_iteration, xarray_container<xt::uvector<double>>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(CONTAINER_iteration, xarray_container<xt::uvector<double>>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(container_iteration, xtensor_container<std::vector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(CONTAINER_iteration, xtensor_container<std::vector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(container_iteration, xtensor_container<xt::uvector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(CONTAINER_iteration, xtensor_container<xt::uvector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
 
         /** this code is the same as container_iteration. Why ?
@@ -95,7 +95,7 @@ namespace xt
             BENCHMARK_TEMPLATE(container_xiteration, xtensor_container<xt::uvector<double>, 1>)->Arg(1000);
         **/
         template <class E>
-        inline auto container_indexing(benchmark::State& state)
+        inline auto CONTAINER_indexing(benchmark::State& state)
         {
             using size_type = typename E::size_type;
             using value_type = typename E::value_type;
@@ -113,13 +113,13 @@ namespace xt
             }
         }
 
-        BENCHMARK_TEMPLATE(container_indexing, xarray_container<std::vector<double>>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(CONTAINER_indexing, xarray_container<std::vector<double>>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(container_indexing, xarray_container<xt::uvector<double>>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(CONTAINER_indexing, xarray_container<xt::uvector<double>>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(container_indexing, xtensor_container<std::vector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(CONTAINER_indexing, xtensor_container<std::vector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
-        BENCHMARK_TEMPLATE(container_indexing, xtensor_container<xt::uvector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
+        BENCHMARK_TEMPLATE(CONTAINER_indexing, xtensor_container<xt::uvector<double>, 1>)->Apply([](benchmark::internal::Benchmark* b)
                         {CustomArguments(b, min, max, threshold1, threshold2);});
     }
 }
