@@ -548,4 +548,91 @@ namespace xt
         EXPECT_EQ(a(2, 2), view1(0, 2));
         EXPECT_EQ(a(2, 3), view1(0, 3));
     }
+
+    TEST(xviews2, row_helper)
+    {
+        std::array<size_t, 2> shape = {3, 4};
+        xtensor<double, 2> a(shape);
+        std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        std::copy(data.cbegin(), data.cend(), a.template begin<layout_type::row_major>());
+
+        // Get first row
+        auto row0 = views2::row(a, 0);
+        EXPECT_EQ(size_t(1), row0.dimension());
+        EXPECT_EQ(size_t(4), row0.size());
+        EXPECT_EQ(1.0, row0(0));
+        EXPECT_EQ(2.0, row0(1));
+        EXPECT_EQ(3.0, row0(2));
+        EXPECT_EQ(4.0, row0(3));
+
+        // Get middle row
+        auto row1 = views2::row(a, 1);
+        EXPECT_EQ(5.0, row1(0));
+        EXPECT_EQ(6.0, row1(1));
+        EXPECT_EQ(7.0, row1(2));
+        EXPECT_EQ(8.0, row1(3));
+
+        // Get last row with negative index
+        auto row_last = views2::row(a, -1);
+        EXPECT_EQ(size_t(4), row_last.size());
+        EXPECT_EQ(9.0, row_last(0));
+        EXPECT_EQ(10.0, row_last(1));
+        EXPECT_EQ(11.0, row_last(2));
+        EXPECT_EQ(12.0, row_last(3));
+
+        // Test modification through row view
+        row1(1) = 100.0;
+        EXPECT_EQ(100.0, a(1, 1));
+    }
+
+    TEST(xviews2, col_helper)
+    {
+        std::array<size_t, 2> shape = {3, 4};
+        xtensor<double, 2> a(shape);
+        std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        std::copy(data.cbegin(), data.cend(), a.template begin<layout_type::row_major>());
+
+        // Get first column
+        auto col0 = views2::col(a, 0);
+        EXPECT_EQ(size_t(1), col0.dimension());
+        EXPECT_EQ(size_t(3), col0.size());
+        EXPECT_EQ(1.0, col0(0));
+        EXPECT_EQ(5.0, col0(1));
+        EXPECT_EQ(9.0, col0(2));
+
+        // Get middle column
+        auto col2 = views2::col(a, 2);
+        EXPECT_EQ(3.0, col2(0));
+        EXPECT_EQ(7.0, col2(1));
+        EXPECT_EQ(11.0, col2(2));
+
+        // Get last column with negative index
+        auto col_last = views2::col(a, -1);
+        EXPECT_EQ(size_t(3), col_last.size());
+        EXPECT_EQ(4.0, col_last(0));
+        EXPECT_EQ(8.0, col_last(1));
+        EXPECT_EQ(12.0, col_last(2));
+
+        // Test modification through column view
+        col2(1) = 200.0;
+        EXPECT_EQ(200.0, a(1, 2));
+    }
+
+    TEST(xviews2, row_col_with_ranges)
+    {
+        std::array<size_t, 3> shape = {4, 5, 6};
+        xtensor<double, 3> a(shape);
+        std::fill(a.begin(), a.end(), 42.0);
+
+        // row() and col() should work with any 2D slice
+        auto slice_2d = views2::view(a, 0, views2::all(), views2::all());
+
+        auto row_of_slice = views2::row(slice_2d, 2);
+        EXPECT_EQ(size_t(1), row_of_slice.dimension());
+        EXPECT_EQ(size_t(6), row_of_slice.size());
+
+        auto col_of_slice = views2::col(slice_2d, 3);
+        EXPECT_EQ(size_t(1), col_of_slice.dimension());
+        EXPECT_EQ(size_t(5), col_of_slice.size());
+    }
 }

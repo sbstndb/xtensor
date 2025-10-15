@@ -448,6 +448,52 @@ namespace xt
             }
         }
 
+        // ==================== Convenience Helpers ====================
+
+        /**
+         * @brief Get a row view from a 2D container
+         *
+         * Equivalent to view(container, row_index, all())
+         *
+         * @param c Container to slice
+         * @param index Row index (supports negative indices)
+         * @return 1D view of the specified row
+         *
+         * Example:
+         * @code{.cpp}
+         * xtensor<double, 2> a = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+         * auto r = row(a, 1);     // Gets [4, 5, 6]
+         * auto r_last = row(a, -1);  // Gets last row [7, 8, 9]
+         * @endcode
+         */
+        template <class Container>
+        constexpr auto row(Container& c, std::ptrdiff_t index)
+        {
+            return view(c, index, all());
+        }
+
+        /**
+         * @brief Get a column view from a 2D container
+         *
+         * Equivalent to view(container, all(), col_index)
+         *
+         * @param c Container to slice
+         * @param index Column index (supports negative indices)
+         * @return 1D view of the specified column
+         *
+         * Example:
+         * @code{.cpp}
+         * xtensor<double, 2> a = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+         * auto col_view = col(a, 1);     // Gets [2, 5, 8]
+         * auto col_last = col(a, -1);    // Gets last column [3, 6, 9]
+         * @endcode
+         */
+        template <class Container>
+        constexpr auto col(Container& c, std::ptrdiff_t index)
+        {
+            return view(c, all(), index);
+        }
+
     }  // namespace views2
 }  // namespace xt
 
