@@ -443,6 +443,79 @@ namespace xt
             }
         }
 
+        // ==================== No-broadcasting variants ====================
+
+        inline auto stencil_onedirection_v2_nobroadcast(benchmark::State& state, size_t size)
+        {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = views2::range(std::ptrdiff_t(1), std::ptrdiff_t(size - 1));
+
+            for (auto _ : state)
+            {
+                xt::views2::noalias(xt::views2::view(b, core, core, core))
+                    = (xt::views2::view(a, views2::range(std::ptrdiff_t(2), std::ptrdiff_t(size)), core, core)
+                       - xt::views2::view(a, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(size - 2)), core, core));
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        inline auto stencil_onedirection_v2_precomputed_nobroadcast(benchmark::State& state, size_t size)
+        {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = views2::range(std::ptrdiff_t(1), std::ptrdiff_t(size - 1));
+
+            // Precompute views
+            auto b_view = xt::views2::view(b, core, core, core);
+            auto a_view1 = xt::views2::view(a, views2::range(std::ptrdiff_t(2), std::ptrdiff_t(size)), core, core);
+            auto a_view2 = xt::views2::view(a, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(size - 2)), core, core);
+
+            for (auto _ : state)
+            {
+                xt::views2::noalias(b_view) = (a_view1 - a_view2);
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        inline auto stencil_twodirections_v2_nobroadcast(benchmark::State& state, size_t size)
+        {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = views2::range(std::ptrdiff_t(1), std::ptrdiff_t(size - 1));
+
+            for (auto _ : state)
+            {
+                xt::views2::noalias(xt::views2::view(b, core, core, core))
+                    = (xt::views2::view(a, core, core, core)
+                       + xt::views2::view(a, core, views2::range(std::ptrdiff_t(2), std::ptrdiff_t(size)), core)
+                       + xt::views2::view(a, core, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(size - 2)), core)
+                       + xt::views2::view(a, views2::range(std::ptrdiff_t(2), std::ptrdiff_t(size)), core, core)
+                       + xt::views2::view(a, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(size - 2)), core, core));
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        inline auto stencil_threedirections_v2_nobroadcast(benchmark::State& state, size_t size)
+        {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = views2::range(std::ptrdiff_t(1), std::ptrdiff_t(size - 1));
+
+            for (auto _ : state)
+            {
+                xt::views2::noalias(xt::views2::view(b, core, core, core))
+                    = (xt::views2::view(a, core, core, core)
+                       + xt::views2::view(a, core, core, views2::range(std::ptrdiff_t(2), std::ptrdiff_t(size)))
+                       + xt::views2::view(a, core, core, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(size - 2)))
+                       + xt::views2::view(a, core, views2::range(std::ptrdiff_t(2), std::ptrdiff_t(size)), core)
+                       + xt::views2::view(a, core, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(size - 2)), core)
+                       + xt::views2::view(a, views2::range(std::ptrdiff_t(2), std::ptrdiff_t(size)), core, core)
+                       + xt::views2::view(a, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(size - 2)), core, core));
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
         BENCHMARK_CAPTURE(stencil_onedirection_v2, stencil_v2_onedirection_50, 3);
         BENCHMARK_CAPTURE(stencil_onedirection_v2, stencil_v2_onedirection_100, 3);
         BENCHMARK_CAPTURE(stencil_onedirection_v2, stencil_v2_onedirection_200, 3);
@@ -466,6 +539,30 @@ namespace xt
         BENCHMARK_CAPTURE(stencil_threedirections_v2, stencil_v2_threedirections_200, 3);
         BENCHMARK_CAPTURE(stencil_threedirections_v2, stencil_v2_threedirections_300, 3);
         BENCHMARK_CAPTURE(stencil_threedirections_v2, stencil_v2_threedirections_500, 3);
+
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_nobroadcast, stencil_v2_onedirection_nobroadcast_50, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_nobroadcast, stencil_v2_onedirection_nobroadcast_100, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_nobroadcast, stencil_v2_onedirection_nobroadcast_200, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_nobroadcast, stencil_v2_onedirection_nobroadcast_300, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_nobroadcast, stencil_v2_onedirection_nobroadcast_500, 3);
+
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_precomputed_nobroadcast, stencil_v2_onedirection_precomputed_nobroadcast_50, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_precomputed_nobroadcast, stencil_v2_onedirection_precomputed_nobroadcast_100, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_precomputed_nobroadcast, stencil_v2_onedirection_precomputed_nobroadcast_200, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_precomputed_nobroadcast, stencil_v2_onedirection_precomputed_nobroadcast_300, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_v2_precomputed_nobroadcast, stencil_v2_onedirection_precomputed_nobroadcast_500, 3);
+
+        BENCHMARK_CAPTURE(stencil_twodirections_v2_nobroadcast, stencil_v2_twodirections_nobroadcast_50, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections_v2_nobroadcast, stencil_v2_twodirections_nobroadcast_100, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections_v2_nobroadcast, stencil_v2_twodirections_nobroadcast_200, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections_v2_nobroadcast, stencil_v2_twodirections_nobroadcast_300, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections_v2_nobroadcast, stencil_v2_twodirections_nobroadcast_500, 3);
+
+        BENCHMARK_CAPTURE(stencil_threedirections_v2_nobroadcast, stencil_v2_threedirections_nobroadcast_50, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections_v2_nobroadcast, stencil_v2_threedirections_nobroadcast_100, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections_v2_nobroadcast, stencil_v2_threedirections_nobroadcast_200, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections_v2_nobroadcast, stencil_v2_threedirections_nobroadcast_300, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections_v2_nobroadcast, stencil_v2_threedirections_nobroadcast_500, 3);
     }
 
     // xarray variants of stencil_v2
