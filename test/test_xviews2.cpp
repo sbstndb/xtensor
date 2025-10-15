@@ -325,4 +325,119 @@ namespace xt
         EXPECT_EQ(0.0, b(0, 0, 0));
         EXPECT_EQ(0.0, b(4, 4, 4));
     }
+
+    TEST(xviews2, newaxis_basic)
+    {
+        std::array<size_t, 2> shape = {3, 4};
+        xtensor<double, 2> a(shape);
+        std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        std::copy(data.cbegin(), data.cend(), a.template begin<layout_type::row_major>());
+
+        // Add newaxis at beginning
+        auto view1 = views2::view(a, views2::newaxis(), views2::all(), views2::all());
+        EXPECT_EQ(size_t(3), view1.dimension());
+        EXPECT_EQ(size_t(1), view1.shape(0));
+        EXPECT_EQ(size_t(3), view1.shape(1));
+        EXPECT_EQ(size_t(4), view1.shape(2));
+        EXPECT_EQ(a(0, 0), view1(0, 0, 0));
+        EXPECT_EQ(a(1, 2), view1(0, 1, 2));
+        EXPECT_EQ(a(2, 3), view1(0, 2, 3));
+
+        // Add newaxis in middle
+        auto view2 = views2::view(a, views2::all(), views2::newaxis(), views2::all());
+        EXPECT_EQ(size_t(3), view2.dimension());
+        EXPECT_EQ(size_t(3), view2.shape(0));
+        EXPECT_EQ(size_t(1), view2.shape(1));
+        EXPECT_EQ(size_t(4), view2.shape(2));
+        EXPECT_EQ(a(0, 0), view2(0, 0, 0));
+        EXPECT_EQ(a(1, 2), view2(1, 0, 2));
+        EXPECT_EQ(a(2, 3), view2(2, 0, 3));
+
+        // Add newaxis at end
+        auto view3 = views2::view(a, views2::all(), views2::all(), views2::newaxis());
+        EXPECT_EQ(size_t(3), view3.dimension());
+        EXPECT_EQ(size_t(3), view3.shape(0));
+        EXPECT_EQ(size_t(4), view3.shape(1));
+        EXPECT_EQ(size_t(1), view3.shape(2));
+        EXPECT_EQ(a(0, 0), view3(0, 0, 0));
+        EXPECT_EQ(a(1, 2), view3(1, 2, 0));
+        EXPECT_EQ(a(2, 3), view3(2, 3, 0));
+    }
+
+    TEST(xviews2, newaxis_with_integer_slice)
+    {
+        std::array<size_t, 2> shape = {3, 4};
+        xtensor<double, 2> a(shape);
+        std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        std::copy(data.cbegin(), data.cend(), a.template begin<layout_type::row_major>());
+
+        // newaxis with integer slice
+        auto view1 = views2::view(a, views2::newaxis(), 1, views2::all());
+        EXPECT_EQ(size_t(2), view1.dimension());
+        EXPECT_EQ(size_t(1), view1.shape(0));
+        EXPECT_EQ(size_t(4), view1.shape(1));
+        EXPECT_EQ(a(1, 0), view1(0, 0));
+        EXPECT_EQ(a(1, 1), view1(0, 1));
+        EXPECT_EQ(a(1, 2), view1(0, 2));
+        EXPECT_EQ(a(1, 3), view1(0, 3));
+    }
+
+    TEST(xviews2, newaxis_with_range)
+    {
+        std::array<size_t, 2> shape = {4, 5};
+        xtensor<double, 2> a(shape);
+        for (size_t i = 0; i < 4; ++i)
+        {
+            for (size_t j = 0; j < 5; ++j)
+            {
+                a(i, j) = static_cast<double>(i * 5 + j);
+            }
+        }
+
+        // newaxis with range
+        auto view1 = views2::view(a, views2::range(std::ptrdiff_t(1), std::ptrdiff_t(3)),
+                                     views2::newaxis(),
+                                     views2::range(std::ptrdiff_t(1), std::ptrdiff_t(4)));
+        EXPECT_EQ(size_t(3), view1.dimension());
+        EXPECT_EQ(size_t(2), view1.shape(0));
+        EXPECT_EQ(size_t(1), view1.shape(1));
+        EXPECT_EQ(size_t(3), view1.shape(2));
+        EXPECT_EQ(a(1, 1), view1(0, 0, 0));
+        EXPECT_EQ(a(1, 2), view1(0, 0, 1));
+        EXPECT_EQ(a(2, 1), view1(1, 0, 0));
+        EXPECT_EQ(a(2, 3), view1(1, 0, 2));
+    }
+
+    TEST(xviews2, multiple_newaxis)
+    {
+        std::array<size_t, 1> shape = {5};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // Multiple newaxis
+        auto view1 = views2::view(a, views2::newaxis(), views2::all(), views2::newaxis());
+        EXPECT_EQ(size_t(3), view1.dimension());
+        EXPECT_EQ(size_t(1), view1.shape(0));
+        EXPECT_EQ(size_t(5), view1.shape(1));
+        EXPECT_EQ(size_t(1), view1.shape(2));
+        EXPECT_EQ(a(0), view1(0, 0, 0));
+        EXPECT_EQ(a(1), view1(0, 1, 0));
+        EXPECT_EQ(a(4), view1(0, 4, 0));
+    }
+
+    TEST(xviews2, newaxis_stride_check)
+    {
+        std::array<size_t, 2> shape = {3, 4};
+        xtensor<double, 2> a(shape);
+
+        // Add newaxis at different positions and check strides
+        auto view1 = views2::view(a, views2::newaxis(), views2::all(), views2::all());
+        EXPECT_EQ(std::ptrdiff_t(0), view1.strides()[0]);  // newaxis dimension has stride 0
+
+        auto view2 = views2::view(a, views2::all(), views2::newaxis(), views2::all());
+        EXPECT_EQ(std::ptrdiff_t(0), view2.strides()[1]);  // newaxis dimension has stride 0
+
+        auto view3 = views2::view(a, views2::all(), views2::all(), views2::newaxis());
+        EXPECT_EQ(std::ptrdiff_t(0), view3.strides()[2]);  // newaxis dimension has stride 0
+    }
 }

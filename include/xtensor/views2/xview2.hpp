@@ -79,6 +79,15 @@ namespace xt
                 static constexpr bool contains_int = rest::contains_int;
             };
 
+            // newaxis slice - OK, doesn't affect contiguity
+            template <class... Rest>
+            struct is_contiguous_pattern_impl<newaxis_tag, Rest...>
+            {
+                using rest = is_contiguous_pattern_impl<Rest...>;
+                static constexpr bool value = rest::value;
+                static constexpr bool contains_int = rest::contains_int;
+            };
+
             // Integer slice - always OK, marks that we have an int
             template <class T, class... Rest>
                 requires std::is_integral_v<T>
@@ -105,7 +114,7 @@ namespace xt
             template <class Container, class... Slices>
             constexpr auto compute_view_shape(const Container& c, const Slices&... slices)
             {
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 // Create shape array
                 std::array<std::size_t, new_rank> shape;
@@ -115,15 +124,26 @@ namespace xt
                 auto fill_shape = [&shape, &shape_idx, &dim, &c](const auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
-                    if constexpr (is_all_slice_v<slice_type>)
+                    if constexpr (is_newaxis_v<slice_type>)
+                    {
+                        shape[shape_idx++] = 1;
+                        // newaxis doesn't consume a dimension, so don't increment dim
+                    }
+                    else if constexpr (is_all_slice_v<slice_type>)
                     {
                         shape[shape_idx++] = c.shape()[dim];
+                        ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         shape[shape_idx++] = slice.size();
+                        ++dim;
                     }
-                    ++dim;
+                    else
+                    {
+                        // Integer slice - consumes dimension but doesn't add to shape
+                        ++dim;
+                    }
                 };
 
                 (fill_shape(slices), ...);
@@ -135,7 +155,7 @@ namespace xt
             template <class Container, class... Slices>
             constexpr auto compute_view_strides(const Container& c, const Slices&... slices)
             {
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 std::array<std::ptrdiff_t, new_rank> strides;
                 std::size_t stride_idx = 0;
@@ -144,15 +164,26 @@ namespace xt
                 auto fill_strides = [&strides, &stride_idx, &dim, &c](const auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
-                    if constexpr (is_all_slice_v<slice_type>)
+                    if constexpr (is_newaxis_v<slice_type>)
+                    {
+                        strides[stride_idx++] = 0;  // newaxis has stride 0
+                        // newaxis doesn't consume a dimension, so don't increment dim
+                    }
+                    else if constexpr (is_all_slice_v<slice_type>)
                     {
                         strides[stride_idx++] = c.strides()[dim];
+                        ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         strides[stride_idx++] = c.strides()[dim] * slice.step;
+                        ++dim;
                     }
-                    ++dim;
+                    else
+                    {
+                        // Integer slice - consumes dimension but doesn't add to strides
+                        ++dim;
+                    }
                 };
 
                 (fill_strides(slices), ...);
@@ -170,15 +201,25 @@ namespace xt
                 auto add_offset = [&offset, &dim, &c](const auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
-                    if constexpr (std::is_integral_v<slice_type>)
+                    if constexpr (is_newaxis_v<slice_type>)
+                    {
+                        // newaxis doesn't consume a dimension or contribute to offset
+                    }
+                    else if constexpr (std::is_integral_v<slice_type>)
                     {
                         offset += static_cast<std::ptrdiff_t>(slice) * c.strides()[dim];
+                        ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         offset += slice.start * c.strides()[dim];
+                        ++dim;
                     }
-                    ++dim;
+                    else
+                    {
+                        // all() - doesn't contribute to offset but consumes dimension
+                        ++dim;
+                    }
                 };
 
                 (add_offset(slices), ...);
@@ -198,15 +239,26 @@ namespace xt
                 auto fill_shape = [&shape, &dim, &c](const auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
-                    if constexpr (is_all_slice_v<slice_type>)
+                    if constexpr (is_newaxis_v<slice_type>)
+                    {
+                        shape.push_back(1);
+                        // newaxis doesn't consume a dimension
+                    }
+                    else if constexpr (is_all_slice_v<slice_type>)
                     {
                         shape.push_back(c.shape()[dim]);
+                        ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         shape.push_back(slice.size());
+                        ++dim;
                     }
-                    ++dim;
+                    else
+                    {
+                        // Integer slice - consumes dimension but doesn't add to shape
+                        ++dim;
+                    }
                 };
 
                 (fill_shape(slices), ...);
@@ -224,15 +276,26 @@ namespace xt
                 auto fill_strides = [&strides, &dim, &c](const auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
-                    if constexpr (is_all_slice_v<slice_type>)
+                    if constexpr (is_newaxis_v<slice_type>)
+                    {
+                        strides.push_back(0);  // newaxis has stride 0
+                        // newaxis doesn't consume a dimension
+                    }
+                    else if constexpr (is_all_slice_v<slice_type>)
                     {
                         strides.push_back(c.strides()[dim]);
+                        ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         strides.push_back(c.strides()[dim] * slice.step);
+                        ++dim;
                     }
-                    ++dim;
+                    else
+                    {
+                        // Integer slice - consumes dimension but doesn't add to strides
+                        ++dim;
+                    }
                 };
 
                 (fill_strides(slices), ...);
@@ -274,7 +337,7 @@ namespace xt
             else
             {
                 // Static rank path - use std::array
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 auto shape = detail::compute_view_shape(c, slices...);
                 auto strides = detail::compute_view_strides(c, slices...);
@@ -318,7 +381,7 @@ namespace xt
             else
             {
                 // Static rank path - use std::array
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 auto shape = detail::compute_view_shape(c, slices...);
                 auto strides = detail::compute_view_strides(c, slices...);

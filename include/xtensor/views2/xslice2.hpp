@@ -35,6 +35,32 @@ namespace xt
         }
 
         /**
+         * @brief Tag type representing a newaxis slice (adds a dimension of size 1)
+         */
+        struct newaxis_tag
+        {
+            constexpr newaxis_tag() = default;
+        };
+
+        /**
+         * @brief Create a newaxis() slice
+         *
+         * newaxis adds a new dimension of size 1 at the specified position.
+         *
+         * Example:
+         * @code{.cpp}
+         * xt::xtensor<double, 2> a = {{1, 2, 3}, {4, 5, 6}};  // shape (2, 3)
+         * auto v1 = views2::view(a, newaxis(), all(), all());  // shape (1, 2, 3)
+         * auto v2 = views2::view(a, all(), newaxis(), all());  // shape (2, 1, 3)
+         * auto v3 = views2::view(a, all(), all(), newaxis());  // shape (2, 3, 1)
+         * @endcode
+         */
+        inline constexpr newaxis_tag newaxis() noexcept
+        {
+            return newaxis_tag{};
+        }
+
+        /**
          * @brief Range slice [start:stop:step]
          */
         template <class T = std::ptrdiff_t>
@@ -123,6 +149,19 @@ namespace xt
 
         template <class T>
         inline constexpr bool is_integer_slice_v = is_integer_slice<T>::value;
+
+        template <class T>
+        struct is_newaxis : std::false_type
+        {
+        };
+
+        template <>
+        struct is_newaxis<newaxis_tag> : std::true_type
+        {
+        };
+
+        template <class T>
+        inline constexpr bool is_newaxis_v = is_newaxis<T>::value;
 
     }  // namespace views2
 }  // namespace xt
