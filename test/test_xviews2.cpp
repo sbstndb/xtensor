@@ -440,4 +440,112 @@ namespace xt
         auto view3 = views2::view(a, views2::all(), views2::all(), views2::newaxis());
         EXPECT_EQ(std::ptrdiff_t(0), view3.strides()[2]);  // newaxis dimension has stride 0
     }
+
+    TEST(xviews2, negative_integer_index)
+    {
+        std::array<size_t, 2> shape = {3, 4};
+        xtensor<double, 2> a(shape);
+        std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        std::copy(data.cbegin(), data.cend(), a.template begin<layout_type::row_major>());
+
+        // -1 should access last row
+        auto view1 = views2::view(a, -1, views2::all());
+        EXPECT_EQ(size_t(1), view1.dimension());
+        EXPECT_EQ(size_t(4), view1.size());
+        EXPECT_EQ(a(2, 0), view1(0));
+        EXPECT_EQ(a(2, 1), view1(1));
+        EXPECT_EQ(a(2, 2), view1(2));
+        EXPECT_EQ(a(2, 3), view1(3));
+
+        // -2 should access second to last row
+        auto view2 = views2::view(a, -2, views2::all());
+        EXPECT_EQ(a(1, 0), view2(0));
+        EXPECT_EQ(a(1, 1), view2(1));
+        EXPECT_EQ(a(1, 2), view2(2));
+        EXPECT_EQ(a(1, 3), view2(3));
+
+        // Negative index in second dimension
+        auto view3 = views2::view(a, views2::all(), -1);
+        EXPECT_EQ(size_t(1), view3.dimension());
+        EXPECT_EQ(size_t(3), view3.size());
+        EXPECT_EQ(a(0, 3), view3(0));
+        EXPECT_EQ(a(1, 3), view3(1));
+        EXPECT_EQ(a(2, 3), view3(2));
+
+        // Multiple negative indices
+        auto view4 = views2::view(a, -1, -1);
+        EXPECT_EQ(size_t(0), view4.dimension());
+        EXPECT_EQ(a(2, 3), *view4.begin());
+    }
+
+    TEST(xviews2, negative_range_indices)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // range(-3, -1) should get [7, 8]
+        auto view1 = views2::view(a, views2::range(std::ptrdiff_t(-3), std::ptrdiff_t(-1)));
+        EXPECT_EQ(size_t(2), view1.size());
+        EXPECT_EQ(7.0, view1(0));
+        EXPECT_EQ(8.0, view1(1));
+
+        // range(-5, 10) should get [5, 6, 7, 8, 9]
+        auto view2 = views2::view(a, views2::range(std::ptrdiff_t(-5), std::ptrdiff_t(10)));
+        EXPECT_EQ(size_t(5), view2.size());
+        EXPECT_EQ(5.0, view2(0));
+        EXPECT_EQ(6.0, view2(1));
+        EXPECT_EQ(7.0, view2(2));
+        EXPECT_EQ(8.0, view2(3));
+        EXPECT_EQ(9.0, view2(4));
+
+        // range(0, -1) should get [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        auto view3 = views2::view(a, views2::range(std::ptrdiff_t(0), std::ptrdiff_t(-1)));
+        EXPECT_EQ(size_t(9), view3.size());
+        EXPECT_EQ(0.0, view3(0));
+        EXPECT_EQ(8.0, view3(8));
+    }
+
+    TEST(xviews2, negative_index_2d)
+    {
+        std::array<size_t, 2> shape = {4, 5};
+        xtensor<double, 2> a(shape);
+        for (size_t i = 0; i < 4; ++i)
+        {
+            for (size_t j = 0; j < 5; ++j)
+            {
+                a(i, j) = static_cast<double>(i * 5 + j);
+            }
+        }
+
+        // Get last 2 rows, last 3 columns
+        auto view1 = views2::view(a, views2::range(std::ptrdiff_t(-2), std::ptrdiff_t(4)),
+                                     views2::range(std::ptrdiff_t(-3), std::ptrdiff_t(5)));
+        EXPECT_EQ(size_t(2), view1.shape(0));
+        EXPECT_EQ(size_t(3), view1.shape(1));
+        EXPECT_EQ(a(2, 2), view1(0, 0));
+        EXPECT_EQ(a(2, 3), view1(0, 1));
+        EXPECT_EQ(a(2, 4), view1(0, 2));
+        EXPECT_EQ(a(3, 2), view1(1, 0));
+        EXPECT_EQ(a(3, 4), view1(1, 2));
+    }
+
+    TEST(xviews2, negative_index_with_newaxis)
+    {
+        std::array<size_t, 2> shape = {3, 4};
+        xtensor<double, 2> a(shape);
+        std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        std::copy(data.cbegin(), data.cend(), a.template begin<layout_type::row_major>());
+
+        // Negative index with newaxis: newaxis adds a dim, integer removes a dim, all keeps a dim
+        // Result: (1, 4)
+        auto view1 = views2::view(a, views2::newaxis(), -1, views2::all());
+        EXPECT_EQ(size_t(2), view1.dimension());
+        EXPECT_EQ(size_t(1), view1.shape(0));
+        EXPECT_EQ(size_t(4), view1.shape(1));
+        EXPECT_EQ(a(2, 0), view1(0, 0));
+        EXPECT_EQ(a(2, 1), view1(0, 1));
+        EXPECT_EQ(a(2, 2), view1(0, 2));
+        EXPECT_EQ(a(2, 3), view1(0, 3));
+    }
 }

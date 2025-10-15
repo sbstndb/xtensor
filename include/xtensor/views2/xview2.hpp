@@ -136,7 +136,27 @@ namespace xt
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
-                        shape[shape_idx++] = slice.size();
+                        // Handle negative indices in range
+                        auto dim_size = static_cast<std::ptrdiff_t>(c.shape()[dim]);
+                        auto start = slice.start < 0 ? slice.start + dim_size : slice.start;
+                        auto stop = slice.stop < 0 ? slice.stop + dim_size : slice.stop;
+                        auto step = slice.step;
+
+                        // Compute size with normalized start/stop
+                        std::size_t size;
+                        if (step > 0)
+                        {
+                            size = static_cast<std::size_t>((stop - start + step - 1) / step);
+                        }
+                        else if (step < 0)
+                        {
+                            size = static_cast<std::size_t>((start - stop - step - 1) / (-step));
+                        }
+                        else
+                        {
+                            size = 0;
+                        }
+                        shape[shape_idx++] = size;
                         ++dim;
                     }
                     else
@@ -207,12 +227,24 @@ namespace xt
                     }
                     else if constexpr (std::is_integral_v<slice_type>)
                     {
-                        offset += static_cast<std::ptrdiff_t>(slice) * c.strides()[dim];
+                        // Handle negative indices: -1 means last element, -2 means second to last, etc.
+                        auto idx = static_cast<std::ptrdiff_t>(slice);
+                        if (idx < 0)
+                        {
+                            idx += static_cast<std::ptrdiff_t>(c.shape()[dim]);
+                        }
+                        offset += idx * c.strides()[dim];
                         ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
-                        offset += slice.start * c.strides()[dim];
+                        // Handle negative start/stop in ranges
+                        auto start = slice.start;
+                        if (start < 0)
+                        {
+                            start += static_cast<std::ptrdiff_t>(c.shape()[dim]);
+                        }
+                        offset += start * c.strides()[dim];
                         ++dim;
                     }
                     else
@@ -251,7 +283,27 @@ namespace xt
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
-                        shape.push_back(slice.size());
+                        // Handle negative indices in range
+                        auto dim_size = static_cast<std::ptrdiff_t>(c.shape()[dim]);
+                        auto start = slice.start < 0 ? slice.start + dim_size : slice.start;
+                        auto stop = slice.stop < 0 ? slice.stop + dim_size : slice.stop;
+                        auto step = slice.step;
+
+                        // Compute size with normalized start/stop
+                        std::size_t size;
+                        if (step > 0)
+                        {
+                            size = static_cast<std::size_t>((stop - start + step - 1) / step);
+                        }
+                        else if (step < 0)
+                        {
+                            size = static_cast<std::size_t>((start - stop - step - 1) / (-step));
+                        }
+                        else
+                        {
+                            size = 0;
+                        }
+                        shape.push_back(size);
                         ++dim;
                     }
                     else
