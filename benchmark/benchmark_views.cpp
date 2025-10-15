@@ -195,6 +195,178 @@ namespace xt
         BENCHMARK_TEMPLATE(view_assign_strided_view_noalias, float);
     }
 
+    // xarray variants of view_benchmarks
+    namespace view_benchmarks_xarray
+    {
+        constexpr int SIZE = 2;
+
+        template <class V>
+        void view_dynamic_iterator(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            for (auto _ : state)
+            {
+                std::copy(v.begin(), v.end(), res.begin());
+                benchmark::DoNotOptimize(res.data());
+            }
+        }
+
+        template <class V>
+        void view_iterator(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::view(data, xt::all(), SIZE / 2);
+            for (auto _ : state)
+            {
+                std::copy(v.begin(), v.end(), res.begin());
+                benchmark::DoNotOptimize(res.data());
+            }
+        }
+
+        template <class V>
+        void view_loop(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            for (auto _ : state)
+            {
+                for (std::size_t k = 0; k < v.shape()[0]; ++k)
+                {
+                    res(k) = v(k);
+                }
+                benchmark::DoNotOptimize(res.data());
+            }
+        }
+
+        template <class V>
+        void view_loop_view(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::view(data, xt::all(), SIZE / 2);
+            for (auto _ : state)
+            {
+                for (std::size_t k = 0; k < v.shape()[0]; ++k)
+                {
+                    res(k) = v(k);
+                }
+                benchmark::DoNotOptimize(res.data());
+            }
+        }
+
+        template <class V>
+        void view_loop_raw(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            for (auto _ : state)
+            {
+                std::size_t j = SIZE / 2;
+                for (std::size_t k = 0; k < SIZE; ++k)
+                {
+                    res(k) = data(k, j);
+                }
+                benchmark::DoNotOptimize(res.data());
+            }
+        }
+
+        template <class V>
+        void view_assign(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            for (auto _ : state)
+            {
+                xt::noalias(res) = v;
+                benchmark::DoNotOptimize(res.data());
+            }
+        }
+
+        template <class V>
+        void view_assign_view(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::view(data, xt::all(), SIZE / 2);
+            auto r = xt::view(res, xt::all());
+            for (auto _ : state)
+            {
+                r = v;
+                benchmark::DoNotOptimize(r.data());
+            }
+        }
+
+        template <class V>
+        void view_assign_strided_view(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            auto r = xt::strided_view(res, xt::xstrided_slice_vector{xt::all()});
+
+            for (auto _ : state)
+            {
+                r = v;
+                benchmark::DoNotOptimize(r.data());
+            }
+        }
+
+        template <class V>
+        void view_assign_view_noalias(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::view(data, xt::all(), SIZE / 2);
+            auto r = xt::view(res, xt::all());
+            for (auto _ : state)
+            {
+                xt::noalias(r) = v;
+                benchmark::DoNotOptimize(r.data());
+            }
+        }
+
+        template <class V>
+        void view_assign_strided_view_noalias(benchmark::State& state)
+        {
+            xt::xarray<V> data = xt::ones<V>({SIZE, SIZE});
+            xt::xarray<V> res = xt::ones<V>({SIZE});
+
+            auto v = xt::strided_view(data, xt::xstrided_slice_vector{xt::all(), SIZE / 2});
+            auto r = xt::strided_view(res, xt::xstrided_slice_vector{xt::all()});
+
+            for (auto _ : state)
+            {
+                xt::noalias(r) = v;
+                benchmark::DoNotOptimize(r.data());
+            }
+        }
+
+        BENCHMARK_TEMPLATE(view_dynamic_iterator, float);
+        BENCHMARK_TEMPLATE(view_iterator, float);
+        BENCHMARK_TEMPLATE(view_loop, float);
+        BENCHMARK_TEMPLATE(view_loop_view, float);
+        BENCHMARK_TEMPLATE(view_loop_raw, float);
+        BENCHMARK_TEMPLATE(view_assign, float);
+        BENCHMARK_TEMPLATE(view_assign_view, float);
+        BENCHMARK_TEMPLATE(view_assign_strided_view, float);
+        BENCHMARK_TEMPLATE(view_assign_view_noalias, float);
+        BENCHMARK_TEMPLATE(view_assign_strided_view_noalias, float);
+    }
+
     namespace finite_diff
     {
         inline auto stencil_threedirections(benchmark::State& state, size_t size)
@@ -311,6 +483,103 @@ namespace xt
         BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_200, 3);
         BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_300, 3);
         BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_500, 3);
+    }
+
+    // xarray variants of finite_diff
+    namespace finite_diff_xarray
+    {
+        inline auto stencil_threedirections(benchmark::State& state, size_t size)
+        {
+            const std::vector<size_t> shape = {size, size, size};
+            xt::xarray<double> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
+            for (auto _ : state)
+            {
+                xt::noalias(xt::view(b, core, core, core)
+                ) = 1.0 / 7.0
+                    * (xt::view(a, core, core, core) + xt::view(a, core, core, xt::range(2, size))
+                       + xt::view(a, core, core, xt::range(0, size - 2))
+                       + xt::view(a, core, xt::range(2, size), core)
+                       + xt::view(a, core, xt::range(0, size - 2), core)
+                       + xt::view(a, xt::range(2, size), core, core)
+                       + xt::view(a, xt::range(0, size - 2), core, core));
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        inline auto stencil_twodirections(benchmark::State& state, size_t size)
+        {
+            const std::vector<size_t> shape = {size, size, size};
+            xt::xarray<double> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
+            for (auto _ : state)
+            {
+                xt::noalias(xt::view(b, core, core, core)
+                ) = 1.0 / 7.0
+                    * (xt::view(a, core, core, core) + xt::view(a, core, xt::range(2, size), core)
+                       + xt::view(a, core, xt::range(0, size - 2), core)
+                       + xt::view(a, xt::range(2, size), core, core)
+                       + xt::view(a, xt::range(0, size - 2), core, core));
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        inline auto stencil_onedirection(benchmark::State& state, size_t size)
+        {
+            const std::vector<size_t> shape = {size, size, size};
+            xt::xarray<double> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
+            for (auto _ : state)
+            {
+                xt::noalias(xt::view(b, core, core, core)
+                ) = 1.0 / 2.0
+                    * (xt::view(a, xt::range(2, size), core, core)
+                       - xt::view(a, xt::range(0, size - 2), core, core));
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        inline auto stencil_onedirection_precomputed_views(benchmark::State& state, size_t size)
+        {
+            const std::vector<size_t> shape = {size, size, size};
+            xt::xarray<double> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
+            // Créer les vues UNE SEULE FOIS avant la boucle
+            auto b_view = xt::view(b, core, core, core);
+            auto a_view1 = xt::view(a, xt::range(2, size), core, core);
+            auto a_view2 = xt::view(a, xt::range(0, size - 2), core, core);
+
+            for (auto _ : state)
+            {
+                xt::noalias(b_view) = 1.0 / 2.0 * (a_view1 - a_view2);
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_xarray_50, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_xarray_100, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_xarray_200, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_xarray_300, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_xarray_500, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_xarray_50, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_xarray_100, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_xarray_200, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_xarray_300, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_xarray_500, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_xarray_50, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_xarray_100, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_xarray_200, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_xarray_300, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_xarray_500, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_xarray_50, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_xarray_100, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_xarray_200, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_xarray_300, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_xarray_500, 3);
     }
 
     namespace stridedview

@@ -153,6 +153,7 @@ set(COMMON_BASE
     test_xtensor_semantic.cpp
     test_xview.cpp
     test_xview_semantic.cpp
+    test_xviews2.cpp
     test_xutils.cpp
     test_xsimd8.cpp
 )
