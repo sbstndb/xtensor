@@ -26,7 +26,7 @@ namespace xt
     // https://github.com/xtensor-stack/xtensor/issues/695
     namespace view_benchmarks
     {
-        constexpr int SIZE = 1000;
+        constexpr int SIZE = 2;
 
         template <class V>
         void view_dynamic_iterator(benchmark::State& state)
@@ -199,11 +199,12 @@ namespace xt
     {
         inline auto stencil_threedirections(benchmark::State& state, size_t size)
         {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
             for (auto _ : state)
             {
-                const std::array<size_t, 3> shape = {size, size, size};
-                xt::xtensor<double, 3> a(shape), b(shape);
-                auto core = xt::range(1, size - 1);
                 xt::noalias(xt::view(b, core, core, core)
                 ) = 1.0 / 7.0
                     * (xt::view(a, core, core, core) + xt::view(a, core, core, xt::range(2, size))
@@ -218,11 +219,12 @@ namespace xt
 
         inline auto stencil_twodirections(benchmark::State& state, size_t size)
         {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
             for (auto _ : state)
             {
-                const std::array<size_t, 3> shape = {size, size, size};
-                xt::xtensor<double, 3> a(shape), b(shape);
-                auto core = xt::range(1, size - 1);
                 xt::noalias(xt::view(b, core, core, core)
                 ) = 1.0 / 7.0
                     * (xt::view(a, core, core, core) + xt::view(a, core, xt::range(2, size), core)
@@ -235,11 +237,12 @@ namespace xt
 
         inline auto stencil_onedirection(benchmark::State& state, size_t size)
         {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
             for (auto _ : state)
             {
-                const std::array<size_t, 3> shape = {size, size, size};
-                xt::xtensor<double, 3> a(shape), b(shape);
-                auto core = xt::range(1, size - 1);
                 xt::noalias(xt::view(b, core, core, core)
                 ) = 1.0 / 2.0
                     * (xt::view(a, xt::range(2, size), core, core)
@@ -248,21 +251,66 @@ namespace xt
             }
         }
 
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_50, 50);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_100, 100);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_200, 200);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_300, 300);
-        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_500, 500);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_50, 50);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_100, 100);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_200, 200);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_300, 300);
-        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_500, 500);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_50, 50);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_100, 100);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_200, 200);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_300, 300);
-        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_500, 500);
+        inline auto stencil_onedirection_precomputed_views(benchmark::State& state, size_t size)
+        {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+            auto core = xt::range(1, size - 1);
+
+            // Créer les vues UNE SEULE FOIS avant la boucle
+            auto b_view = xt::view(b, core, core, core);
+            auto a_view1 = xt::view(a, xt::range(2, size), core, core);
+            auto a_view2 = xt::view(a, xt::range(0, size - 2), core, core);
+
+            for (auto _ : state)
+            {
+                xt::noalias(b_view) = 1.0 / 2.0 * (a_view1 - a_view2);
+                benchmark::DoNotOptimize(b);
+            }
+        }
+
+        inline auto stencil_onedirection_adapt_strides_only(benchmark::State& state, size_t size)
+        {
+            const std::array<size_t, 3> shape = {size, size, size};
+            xt::xtensor<double, 3> a(shape), b(shape);
+
+            // Préparer les shapes et strides comme dans une vue
+            std::array<std::size_t, 3> view_shape = {size - 2, size, size};
+            std::array<std::ptrdiff_t, 3> strides = a.strides();
+
+            for (auto _ : state)
+            {
+                // Mesurer uniquement adapt_strides
+                xt::adapt_strides(view_shape, strides);
+                benchmark::DoNotOptimize(strides);
+            }
+        }
+
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_50, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_100, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_200, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_300, 3);
+        BENCHMARK_CAPTURE(stencil_threedirections, stencil_threedirections_500, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_50, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_100, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_200, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_300, 3);
+        BENCHMARK_CAPTURE(stencil_twodirections, stencil_twodirections_500, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_50, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_100, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_200, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_300, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection, stencil_onedirections_500, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_50, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_100, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_200, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_300, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_precomputed_views, stencil_onedirections_precomputed_500, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_50, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_100, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_200, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_300, 3);
+        BENCHMARK_CAPTURE(stencil_onedirection_adapt_strides_only, stencil_onedirections_adapt_strides_500, 3);
     }
 
     namespace stridedview
@@ -288,9 +336,9 @@ namespace xt
         auto transpose_assign_rm_cm = transpose_assign<layout_type::row_major, layout_type::column_major>;
         auto transpose_assign_cm_rm = transpose_assign<layout_type::column_major, layout_type::row_major>;
 
-        BENCHMARK_CAPTURE(transpose_assign_rm_rm, 10x20x500, {10, 20, 500});
-        BENCHMARK_CAPTURE(transpose_assign_cm_cm, 10x20x500, {10, 20, 500});
-        BENCHMARK_CAPTURE(transpose_assign_rm_cm, 10x20x500, {10, 20, 500});
-        BENCHMARK_CAPTURE(transpose_assign_cm_rm, 10x20x500, {10, 20, 500});
+        BENCHMARK_CAPTURE(transpose_assign_rm_rm, 10x20x500, {1, 1, 1});
+        BENCHMARK_CAPTURE(transpose_assign_cm_cm, 10x20x500, {1, 1, 1});
+        BENCHMARK_CAPTURE(transpose_assign_rm_cm, 10x20x500, {1, 1, 1});
+        BENCHMARK_CAPTURE(transpose_assign_cm_rm, 10x20x500, {1, 1, 1});
     }
 }

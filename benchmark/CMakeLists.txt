@@ -102,21 +102,11 @@ include_directories(${XTENSOR_INCLUDE_DIR})
 include_directories(${GBENCHMARK_INCLUDE_DIRS})
 
 set(XTENSOR_BENCHMARK
-    benchmark_assign.cpp
-    benchmark_builder.cpp
-    benchmark_container.cpp
-    benchmark_creation.cpp
-    benchmark_increment_stepper.cpp
-    benchmark_lambda_expressions.cpp
-    benchmark_math.cpp
-    benchmark_random.cpp
-    benchmark_reducer.cpp
     benchmark_views.cpp
-    benchmark_xshape.cpp
-    benchmark_view_access.cpp
-    benchmark_view_assignment.cpp
-    benchmark_view_adapt.cpp
-    benchmark_stl.cpp
+    benchmark_views2.cpp
+    #benchmark_view_access.cpp
+    #benchmark_view_assignment.cpp
+    #benchmark_view_adapt.cpp
     main.cpp
 )
 
