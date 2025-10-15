@@ -635,4 +635,193 @@ namespace xt
         EXPECT_EQ(size_t(1), col_of_slice.dimension());
         EXPECT_EQ(size_t(5), col_of_slice.size());
     }
+
+    TEST(xviews2, placeholder_range_start)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // range(_, 5) should get [0, 1, 2, 3, 4]
+        auto view1 = views2::view(a, views2::range(views2::_, std::ptrdiff_t(5)));
+        EXPECT_EQ(size_t(5), view1.size());
+        EXPECT_EQ(0.0, view1(0));
+        EXPECT_EQ(1.0, view1(1));
+        EXPECT_EQ(2.0, view1(2));
+        EXPECT_EQ(3.0, view1(3));
+        EXPECT_EQ(4.0, view1(4));
+    }
+
+    TEST(xviews2, placeholder_range_stop)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // range(3, _) should get [3, 4, 5, 6, 7, 8, 9]
+        auto view1 = views2::view(a, views2::range(std::ptrdiff_t(3), views2::_));
+        EXPECT_EQ(size_t(7), view1.size());
+        EXPECT_EQ(3.0, view1(0));
+        EXPECT_EQ(4.0, view1(1));
+        EXPECT_EQ(9.0, view1(6));
+    }
+
+    TEST(xviews2, placeholder_range_both)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // range(_, _) should get entire array (like all())
+        auto view1 = views2::view(a, views2::range(views2::_, views2::_));
+        EXPECT_EQ(size_t(10), view1.size());
+        EXPECT_EQ(0.0, view1(0));
+        EXPECT_EQ(9.0, view1(9));
+    }
+
+    TEST(xviews2, placeholder_range_with_step)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // range(_, _, 2) should get [0, 2, 4, 6, 8]
+        auto view1 = views2::view(a, views2::range(views2::_, views2::_, std::ptrdiff_t(2)));
+        EXPECT_EQ(size_t(5), view1.size());
+        EXPECT_EQ(0.0, view1(0));
+        EXPECT_EQ(2.0, view1(1));
+        EXPECT_EQ(4.0, view1(2));
+        EXPECT_EQ(6.0, view1(3));
+        EXPECT_EQ(8.0, view1(4));
+
+        // range(1, _, 3) should get [1, 4, 7]
+        auto view2 = views2::view(a, views2::range(std::ptrdiff_t(1), views2::_, std::ptrdiff_t(3)));
+        EXPECT_EQ(size_t(3), view2.size());
+        EXPECT_EQ(1.0, view2(0));
+        EXPECT_EQ(4.0, view2(1));
+        EXPECT_EQ(7.0, view2(2));
+    }
+
+    TEST(xviews2, keep_slice_basic)
+    {
+        std::array<size_t, 2> shape = {4, 5};
+        xtensor<double, 2> a(shape);
+        for (size_t i = 0; i < 4; ++i)
+        {
+            for (size_t j = 0; j < 5; ++j)
+            {
+                a(i, j) = static_cast<double>(i * 5 + j);
+            }
+        }
+
+        // keep(0, 2) should select rows 0 and 2
+        auto view1 = views2::view(a, views2::keep(0, 2), views2::all());
+        EXPECT_EQ(size_t(2), view1.shape(0));
+        EXPECT_EQ(size_t(5), view1.shape(1));
+        EXPECT_EQ(a(0, 0), view1(0, 0));
+        EXPECT_EQ(a(0, 4), view1(0, 4));
+        EXPECT_EQ(a(2, 0), view1(1, 0));
+        EXPECT_EQ(a(2, 4), view1(1, 4));
+    }
+
+    TEST(xviews2, keep_slice_negative_indices)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // keep(-1) should select last element
+        auto view1 = views2::view(a, views2::keep(-1));
+        EXPECT_EQ(size_t(1), view1.size());
+        EXPECT_EQ(9.0, view1(0));
+
+        // keep(-2, -1) should select last two elements
+        auto view2 = views2::view(a, views2::keep(-2, -1));
+        EXPECT_EQ(size_t(2), view2.size());
+        EXPECT_EQ(8.0, view2(0));
+        EXPECT_EQ(9.0, view2(1));
+    }
+
+    TEST(xviews2, keep_slice_repeated_indices)
+    {
+        std::array<size_t, 1> shape = {5};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // keep(1, 1, 1) should repeat index 1 three times
+        auto view1 = views2::view(a, views2::keep(1, 1, 1));
+        EXPECT_EQ(size_t(3), view1.size());
+        EXPECT_EQ(1.0, view1(0));
+        EXPECT_EQ(1.0, view1(1));
+        EXPECT_EQ(1.0, view1(2));
+    }
+
+    TEST(xviews2, drop_slice_basic)
+    {
+        std::array<size_t, 2> shape = {4, 5};
+        xtensor<double, 2> a(shape);
+        for (size_t i = 0; i < 4; ++i)
+        {
+            for (size_t j = 0; j < 5; ++j)
+            {
+                a(i, j) = static_cast<double>(i * 5 + j);
+            }
+        }
+
+        // drop(1, 3) should keep rows 0 and 2
+        auto view1 = views2::view(a, views2::drop(1, 3), views2::all());
+        EXPECT_EQ(size_t(2), view1.shape(0));
+        EXPECT_EQ(size_t(5), view1.shape(1));
+        EXPECT_EQ(a(0, 0), view1(0, 0));
+        EXPECT_EQ(a(0, 4), view1(0, 4));
+        EXPECT_EQ(a(2, 0), view1(1, 0));
+        EXPECT_EQ(a(2, 4), view1(1, 4));
+    }
+
+    TEST(xviews2, drop_slice_negative_indices)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // drop(-1) should exclude last element
+        auto view1 = views2::view(a, views2::drop(-1));
+        EXPECT_EQ(size_t(9), view1.size());
+        EXPECT_EQ(0.0, view1(0));
+        EXPECT_EQ(8.0, view1(8));
+
+        // drop(0, -1) should exclude first and last elements
+        auto view2 = views2::view(a, views2::drop(0, -1));
+        EXPECT_EQ(size_t(8), view2.size());
+        EXPECT_EQ(1.0, view2(0));
+        EXPECT_EQ(8.0, view2(7));
+    }
+
+    TEST(xviews2, keep_drop_combined)
+    {
+        std::array<size_t, 3> shape = {4, 3, 5};
+        xtensor<double, 3> a(shape);
+        std::fill(a.begin(), a.end(), 1.0);
+
+        // Use keep and drop on different dimensions
+        auto view1 = views2::view(a, views2::keep(0, 2), views2::drop(1), views2::all());
+        EXPECT_EQ(size_t(3), view1.dimension());
+        EXPECT_EQ(size_t(2), view1.shape(0));  // keep(0, 2) from dimension with size 4
+        EXPECT_EQ(size_t(2), view1.shape(1));  // drop(1) from dimension with size 3
+        EXPECT_EQ(size_t(5), view1.shape(2));  // all() keeps full dimension
+    }
+
+    TEST(xviews2, placeholder_with_negative_step)
+    {
+        std::array<size_t, 1> shape = {10};
+        xtensor<double, 1> a(shape);
+        std::iota(a.begin(), a.end(), 0.0);
+
+        // range(_, _, -1) should reverse the array
+        auto view1 = views2::view(a, views2::range(views2::_, views2::_, std::ptrdiff_t(-1)));
+        EXPECT_EQ(size_t(10), view1.size());
+        EXPECT_EQ(9.0, view1(0));
+        EXPECT_EQ(8.0, view1(1));
+        EXPECT_EQ(0.0, view1(9));
+    }
 }

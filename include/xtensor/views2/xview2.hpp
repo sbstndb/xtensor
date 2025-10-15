@@ -107,21 +107,46 @@ namespace xt
                 static constexpr bool contains_int = rest::contains_int;
             };
 
+            // Range adaptor - OK if no int follows (same as xrange)
+            template <class A, class B, class C, class... Rest>
+            struct is_contiguous_pattern_impl<xrange_adaptor<A, B, C>, Rest...>
+            {
+                using rest = is_contiguous_pattern_impl<Rest...>;
+                static constexpr bool value = !rest::contains_int && rest::value;
+                static constexpr bool contains_int = rest::contains_int;
+            };
+
+            // keep_slice - NEVER contiguous
+            template <class T, class... Rest>
+            struct is_contiguous_pattern_impl<xkeep_slice<T>, Rest...>
+            {
+                static constexpr bool value = false;
+                static constexpr bool contains_int = false;
+            };
+
+            // drop_slice - NEVER contiguous
+            template <class T, class... Rest>
+            struct is_contiguous_pattern_impl<xdrop_slice<T>, Rest...>
+            {
+                static constexpr bool value = false;
+                static constexpr bool contains_int = false;
+            };
+
             template <class... Slices>
             inline constexpr bool is_contiguous_pattern_v = is_contiguous_pattern_impl<Slices...>::value;
 
             // Compute new shape from slices
             template <class Container, class... Slices>
-            constexpr auto compute_view_shape(const Container& c, const Slices&... slices)
+            constexpr auto compute_view_shape(const Container& c, Slices&... slices)
             {
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> || is_range_adaptor_v<std::decay_t<Slices>> || is_keep_slice_v<std::decay_t<Slices>> || is_drop_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 // Create shape array
                 std::array<std::size_t, new_rank> shape;
                 std::size_t shape_idx = 0;
                 std::size_t dim = 0;
 
-                auto fill_shape = [&shape, &shape_idx, &dim, &c](const auto& slice)
+                auto fill_shape = [&shape, &shape_idx, &dim, &c](auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
                     if constexpr (is_newaxis_v<slice_type>)
@@ -132,6 +157,39 @@ namespace xt
                     else if constexpr (is_all_slice_v<slice_type>)
                     {
                         shape[shape_idx++] = c.shape()[dim];
+                        ++dim;
+                    }
+                    else if constexpr (is_range_adaptor_v<slice_type>)
+                    {
+                        // Convert range adaptor to concrete xrange
+                        auto concrete_range = slice.template get<std::ptrdiff_t>(c.shape()[dim]);
+                        auto dim_size = static_cast<std::ptrdiff_t>(c.shape()[dim]);
+                        auto step = concrete_range.step;
+
+                        // Normalize start
+                        auto start = concrete_range.start < 0 ? concrete_range.start + dim_size : concrete_range.start;
+
+                        // For stop: don't normalize -1 when step < 0 (it means "before beginning")
+                        auto stop = concrete_range.stop;
+                        if (stop < 0 && !(step < 0 && stop == -1))
+                        {
+                            stop += dim_size;
+                        }
+
+                        std::size_t size;
+                        if (step > 0)
+                        {
+                            size = static_cast<std::size_t>((stop - start + step - 1) / step);
+                        }
+                        else if (step < 0)
+                        {
+                            size = static_cast<std::size_t>((start - stop - step - 1) / (-step));
+                        }
+                        else
+                        {
+                            size = 0;
+                        }
+                        shape[shape_idx++] = size;
                         ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
@@ -159,6 +217,20 @@ namespace xt
                         shape[shape_idx++] = size;
                         ++dim;
                     }
+                    else if constexpr (is_keep_slice_v<slice_type>)
+                    {
+                        // Normalize keep slice and get its size
+                        slice.normalize(c.shape()[dim]);
+                        shape[shape_idx++] = slice.size();
+                        ++dim;
+                    }
+                    else if constexpr (is_drop_slice_v<slice_type>)
+                    {
+                        // Normalize drop slice and get its size
+                        slice.normalize(c.shape()[dim]);
+                        shape[shape_idx++] = slice.size();
+                        ++dim;
+                    }
                     else
                     {
                         // Integer slice - consumes dimension but doesn't add to shape
@@ -173,15 +245,15 @@ namespace xt
 
             // Compute strides for view
             template <class Container, class... Slices>
-            constexpr auto compute_view_strides(const Container& c, const Slices&... slices)
+            constexpr auto compute_view_strides(const Container& c, Slices&... slices)
             {
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> || is_range_adaptor_v<std::decay_t<Slices>> || is_keep_slice_v<std::decay_t<Slices>> || is_drop_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 std::array<std::ptrdiff_t, new_rank> strides;
                 std::size_t stride_idx = 0;
                 std::size_t dim = 0;
 
-                auto fill_strides = [&strides, &stride_idx, &dim, &c](const auto& slice)
+                auto fill_strides = [&strides, &stride_idx, &dim, &c](auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
                     if constexpr (is_newaxis_v<slice_type>)
@@ -194,9 +266,22 @@ namespace xt
                         strides[stride_idx++] = c.strides()[dim];
                         ++dim;
                     }
+                    else if constexpr (is_range_adaptor_v<slice_type>)
+                    {
+                        // Convert range adaptor to concrete xrange
+                        auto concrete_range = slice.template get<std::ptrdiff_t>(c.shape()[dim]);
+                        strides[stride_idx++] = c.strides()[dim] * concrete_range.step;
+                        ++dim;
+                    }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         strides[stride_idx++] = c.strides()[dim] * slice.step;
+                        ++dim;
+                    }
+                    else if constexpr (is_keep_slice_v<slice_type> || is_drop_slice_v<slice_type>)
+                    {
+                        // keep/drop use base stride of underlying dimension
+                        strides[stride_idx++] = c.strides()[dim];
                         ++dim;
                     }
                     else
@@ -213,12 +298,12 @@ namespace xt
 
             // Compute offset from integer slices
             template <class Container, class... Slices>
-            constexpr std::size_t compute_view_offset(const Container& c, const Slices&... slices)
+            constexpr std::size_t compute_view_offset(const Container& c, Slices&... slices)
             {
                 std::ptrdiff_t offset = 0;
                 std::size_t dim = 0;
 
-                auto add_offset = [&offset, &dim, &c](const auto& slice)
+                auto add_offset = [&offset, &dim, &c](auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
                     if constexpr (is_newaxis_v<slice_type>)
@@ -236,6 +321,18 @@ namespace xt
                         offset += idx * c.strides()[dim];
                         ++dim;
                     }
+                    else if constexpr (is_range_adaptor_v<slice_type>)
+                    {
+                        // Convert range adaptor to concrete xrange
+                        auto concrete_range = slice.template get<std::ptrdiff_t>(c.shape()[dim]);
+                        auto start = concrete_range.start;
+                        if (start < 0)
+                        {
+                            start += static_cast<std::ptrdiff_t>(c.shape()[dim]);
+                        }
+                        offset += start * c.strides()[dim];
+                        ++dim;
+                    }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         // Handle negative start/stop in ranges
@@ -245,6 +342,11 @@ namespace xt
                             start += static_cast<std::ptrdiff_t>(c.shape()[dim]);
                         }
                         offset += start * c.strides()[dim];
+                        ++dim;
+                    }
+                    else if constexpr (is_keep_slice_v<slice_type> || is_drop_slice_v<slice_type>)
+                    {
+                        // keep/drop: offset will be handled via indirection - start at 0
                         ++dim;
                     }
                     else
@@ -263,12 +365,12 @@ namespace xt
 
             // Compute shape for dynamic rank containers
             template <class Container, class... Slices>
-            auto compute_view_shape_dynamic(const Container& c, const Slices&... slices)
+            auto compute_view_shape_dynamic(const Container& c, Slices&... slices)
             {
                 std::vector<std::size_t> shape;
                 std::size_t dim = 0;
 
-                auto fill_shape = [&shape, &dim, &c](const auto& slice)
+                auto fill_shape = [&shape, &dim, &c](auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
                     if constexpr (is_newaxis_v<slice_type>)
@@ -279,6 +381,39 @@ namespace xt
                     else if constexpr (is_all_slice_v<slice_type>)
                     {
                         shape.push_back(c.shape()[dim]);
+                        ++dim;
+                    }
+                    else if constexpr (is_range_adaptor_v<slice_type>)
+                    {
+                        // Convert range adaptor to concrete xrange
+                        auto concrete_range = slice.template get<std::ptrdiff_t>(c.shape()[dim]);
+                        auto dim_size = static_cast<std::ptrdiff_t>(c.shape()[dim]);
+                        auto step = concrete_range.step;
+
+                        // Normalize start
+                        auto start = concrete_range.start < 0 ? concrete_range.start + dim_size : concrete_range.start;
+
+                        // For stop: don't normalize -1 when step < 0 (it means "before beginning")
+                        auto stop = concrete_range.stop;
+                        if (stop < 0 && !(step < 0 && stop == -1))
+                        {
+                            stop += dim_size;
+                        }
+
+                        std::size_t size;
+                        if (step > 0)
+                        {
+                            size = static_cast<std::size_t>((stop - start + step - 1) / step);
+                        }
+                        else if (step < 0)
+                        {
+                            size = static_cast<std::size_t>((start - stop - step - 1) / (-step));
+                        }
+                        else
+                        {
+                            size = 0;
+                        }
+                        shape.push_back(size);
                         ++dim;
                     }
                     else if constexpr (is_range_slice_v<slice_type>)
@@ -306,6 +441,18 @@ namespace xt
                         shape.push_back(size);
                         ++dim;
                     }
+                    else if constexpr (is_keep_slice_v<slice_type>)
+                    {
+                        slice.normalize(c.shape()[dim]);
+                        shape.push_back(slice.size());
+                        ++dim;
+                    }
+                    else if constexpr (is_drop_slice_v<slice_type>)
+                    {
+                        slice.normalize(c.shape()[dim]);
+                        shape.push_back(slice.size());
+                        ++dim;
+                    }
                     else
                     {
                         // Integer slice - consumes dimension but doesn't add to shape
@@ -320,12 +467,12 @@ namespace xt
 
             // Compute strides for dynamic rank containers
             template <class Container, class... Slices>
-            auto compute_view_strides_dynamic(const Container& c, const Slices&... slices)
+            auto compute_view_strides_dynamic(const Container& c, Slices&... slices)
             {
                 std::vector<std::ptrdiff_t> strides;
                 std::size_t dim = 0;
 
-                auto fill_strides = [&strides, &dim, &c](const auto& slice)
+                auto fill_strides = [&strides, &dim, &c](auto& slice)
                 {
                     using slice_type = std::decay_t<decltype(slice)>;
                     if constexpr (is_newaxis_v<slice_type>)
@@ -338,9 +485,20 @@ namespace xt
                         strides.push_back(c.strides()[dim]);
                         ++dim;
                     }
+                    else if constexpr (is_range_adaptor_v<slice_type>)
+                    {
+                        auto concrete_range = slice.template get<std::ptrdiff_t>(c.shape()[dim]);
+                        strides.push_back(c.strides()[dim] * concrete_range.step);
+                        ++dim;
+                    }
                     else if constexpr (is_range_slice_v<slice_type>)
                     {
                         strides.push_back(c.strides()[dim] * slice.step);
+                        ++dim;
+                    }
+                    else if constexpr (is_keep_slice_v<slice_type> || is_drop_slice_v<slice_type>)
+                    {
+                        strides.push_back(c.strides()[dim]);
                         ++dim;
                     }
                     else
@@ -389,7 +547,7 @@ namespace xt
             else
             {
                 // Static rank path - use std::array
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> || is_range_adaptor_v<std::decay_t<Slices>> || is_keep_slice_v<std::decay_t<Slices>> || is_drop_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 auto shape = detail::compute_view_shape(c, slices...);
                 auto strides = detail::compute_view_strides(c, slices...);
@@ -433,7 +591,7 @@ namespace xt
             else
             {
                 // Static rank path - use std::array
-                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> ? 1 : 0) + ...);
+                constexpr std::size_t new_rank = ((is_all_slice_v<std::decay_t<Slices>> || is_range_slice_v<std::decay_t<Slices>> || is_newaxis_v<std::decay_t<Slices>> || is_range_adaptor_v<std::decay_t<Slices>> || is_keep_slice_v<std::decay_t<Slices>> || is_drop_slice_v<std::decay_t<Slices>> ? 1 : 0) + ...);
 
                 auto shape = detail::compute_view_shape(c, slices...);
                 auto strides = detail::compute_view_strides(c, slices...);
