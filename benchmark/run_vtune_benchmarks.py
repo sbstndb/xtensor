@@ -72,7 +72,9 @@ class VTuneBenchmarkRunner:
         for line in result.stdout.split('\n'):
             line = line.strip()
             # Ignorer les lignes vides et les messages non-benchmark
-            if line and not line.startswith('NOT USING') and '/' in line:
+            # Les benchmarks valides contiennent généralement des caractères alphanumériques
+            # et peuvent contenir des caractères comme <, >, _, /, etc.
+            if line and not line.startswith('NOT USING'):
                 benchmarks.append(line)
 
         print(f"✅ Found {len(benchmarks)} benchmarks")
